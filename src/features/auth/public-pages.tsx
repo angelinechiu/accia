@@ -1,20 +1,17 @@
 "use client";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import {
   ArrowRight,
-  BarChart3,
   Check,
   CheckCircle2,
   FileCheck2,
+  Gauge,
   LockKeyhole,
-  Sparkles,
   ScanLine,
-  ShieldCheck,
+  ShieldAlert,
   Upload,
-  Users,
-  Zap,
 } from "lucide-react";
 import { Brand } from "@/components/common/layout/app-shell";
 import { PublicHeader } from "@/components/common/layout/public-header";
@@ -31,6 +28,173 @@ import {
 import { requestEnterpriseAccess } from "@/lib/api/tenant.service";
 import { roleHome } from "@/lib/permissions";
 import { useResource } from "@/features/common/hooks/use-resource";
+
+const MODULES = [
+  {
+    id: "platform",
+    kicker: "SAIC",
+    title: "Companies and account limits.",
+    stats: [
+      ["Companies", "2"],
+      ["Seats", "12"],
+      ["Pending", "1"],
+    ],
+    lines: ["ABC Sdn Bhd approved", "XYZ Sdn Bhd pending", "Seat limit set"],
+  },
+  {
+    id: "documents",
+    kicker: "Intake",
+    title: "Invoices, bills, and receipts.",
+    stats: [
+      ["Uploaded", "18"],
+      ["Extracting", "3"],
+      ["Ready", "15"],
+    ],
+    lines: ["INV-2026-00821 extracted", "Receipt batch uploaded", "Supplier field checked"],
+  },
+  {
+    id: "exceptions",
+    kicker: "Review",
+    title: "Items that need a person.",
+    stats: [
+      ["Open", "7"],
+      ["Today", "2"],
+      ["Rate", "8%"],
+    ],
+    lines: ["Total does not match", "Tax line missing", "Sent to the owner"],
+  },
+  {
+    id: "records",
+    kicker: "Ledger",
+    title: "Records in one standard shape.",
+    stats: [
+      ["Ready", "31"],
+      ["Exported", "20"],
+      ["Currency", "MYR"],
+    ],
+    lines: ["Office supplies standardised", "Ready to export", "Change kept on the record"],
+  },
+  {
+    id: "reports",
+    kicker: "Performance",
+    title: "How processing is going.",
+    stats: [
+      ["Accuracy", "96%"],
+      ["Time", "12s"],
+      ["Volume", "42"],
+    ],
+    lines: ["Pilot accuracy holding", "Under 20 seconds", "Concurrent uploads ok"],
+  },
+] as const;
+
+const NAV = ["Platform", "Documents", "Exceptions", "Records", "Reports"] as const;
+
+function ModuleDeck() {
+  const [index, setIndex] = useState(2);
+  const [tick, setTick] = useState(0);
+  const dragX = useRef(0);
+
+  function show(next: number) {
+    setIndex((next + MODULES.length) % MODULES.length);
+    setTick((value) => value + 1);
+  }
+
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const timer = window.setInterval(() => {
+      setIndex((current) => (current + 1) % MODULES.length);
+    }, 4000);
+    return () => window.clearInterval(timer);
+  }, [tick]);
+
+  return (
+    <section className="module-deck" aria-labelledby="modules-title">
+      <div className="section-heading">
+        <span>MODULES</span>
+        <h2 id="modules-title">A general look across the workspace.</h2>
+        <p>The open card stays in the centre and moves every 4 seconds.</p>
+      </div>
+      <div
+        className="card-stack"
+        onPointerDown={(event) => {
+          dragX.current = event.clientX;
+        }}
+        onPointerUp={(event) => {
+          const delta = event.clientX - dragX.current;
+          if (delta > 48) show(index - 1);
+          if (delta < -48) show(index + 1);
+        }}
+      >
+        {MODULES.map((item, itemIndex) => {
+          let slot = itemIndex - index;
+          if (slot > MODULES.length / 2) slot -= MODULES.length;
+          if (slot < -MODULES.length / 2) slot += MODULES.length;
+          const place = slot === -1 || slot === 0 || slot === 1 ? String(slot) : "hide";
+          return (
+            <article key={item.id} className="module-card" data-slot={place}>
+              <div className="module-top">
+                <span className="window-dots"><i /><i /><i /></span>
+                <span>Accounting Intelligence workspace</span>
+                <Badge>Ready</Badge>
+              </div>
+              <div className="module-body">
+                <aside>
+                  <strong>Workspace</strong>
+                  {NAV.map((name) => (
+                    <span key={name} className={name.toLowerCase() === item.id ? "on" : ""}>{name}</span>
+                  ))}
+                </aside>
+                <div>
+                  <div className="module-head">
+                    <div>
+                      <small>{item.kicker}</small>
+                      <h3>{item.title}</h3>
+                    </div>
+                    <b>AT</b>
+                  </div>
+                  <div className="module-stats">
+                    {item.stats.map(([label, value]) => (
+                      <p key={label}><span>{label}</span><strong>{value}</strong><em>Updated just now</em></p>
+                    ))}
+                  </div>
+                  <div className="module-lower">
+                    <div>
+                      <p>Processing volume <span>Now</span></p>
+                      <div className="module-bars" aria-hidden="true"><i /><i /><i /><i /><i /><i /><i /></div>
+                    </div>
+                    <div>
+                      <p>Latest <span>Live</span></p>
+                      <ul>
+                        {item.lines.map((line) => <li key={line}>{line}</li>)}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </article>
+          );
+        })}
+      </div>
+      <div className="module-controls">
+        <button type="button" aria-label="Previous module" onClick={() => show(index - 1)}>←</button>
+        <div role="tablist" aria-label="Module pages">
+          {MODULES.map((item, itemIndex) => (
+            <button
+              key={item.id}
+              type="button"
+              className={itemIndex === index ? "on" : ""}
+              aria-label={item.id}
+              aria-pressed={itemIndex === index}
+              onClick={() => show(itemIndex)}
+            />
+          ))}
+        </div>
+        <button type="button" className="next" aria-label="Next module" onClick={() => show(index + 1)}>→</button>
+      </div>
+    </section>
+  );
+}
+
 export function PublicPage({ page }: { page: string }) {
   const router = useRouter();
   const params = useSearchParams();
@@ -146,14 +310,12 @@ export function PublicPage({ page }: { page: string }) {
               trusted <em>record.</em>
             </h1>
             <p className="landing-subtitle">
-              AI-driven invoice processing with
-              <br />
-              automated record standardisation
+              AI-driven invoice processing and automated record standardisation
             </p>
             <p className="landing-description">
-              One professional workspace for extraction, exception handling,
-              validation, and standardised accounting records — with clear
-              ownership at every step.
+              Invoices, bills, and receipts become checked accounting records.
+              Extraction, validation, exception review, and a standard record
+              shape sit in one workspace — without posting to a live ledger.
             </p>
             <div className="actions">
               <Link href="/login" className="btn primary">
@@ -162,27 +324,9 @@ export function PublicPage({ page }: { page: string }) {
               <Link href="/request-access" className="btn">
                 Register enterprise
               </Link>
-            </div>
-            <form
-              className="landing-email-cta"
-              onSubmit={(event) => {
-                event.preventDefault();
-                const value = new FormData(event.currentTarget).get("work-email");
-                router.push(`/request-access?email=${encodeURIComponent(String(value ?? ""))}`);
-              }}
-            >
-              <input
-                name="work-email"
-                type="email"
-                aria-label="Work email"
-                placeholder="Enter your work email"
-                required
-              />
-              <button className="btn primary">Get started</button>
-            </form>
-            <div className="landing-trust">
-              <ShieldCheck size={17} /> Built for teams. Designed for
-              accountability.
+              <a href="#workspace" className="text-link">
+                Get started
+              </a>
             </div>
           </div>
           <div className="landing-visual">
@@ -234,98 +378,76 @@ export function PublicPage({ page }: { page: string }) {
             </div>
           </div>
         </main>
-        <section className="product-showcase" aria-label="Platform preview">
-          <div className="showcase-glow" />
-          <div className="product-window">
-            <div className="product-window-bar">
-              <span className="window-dots"><i /><i /><i /></span>
-              <span>Accounting Intelligence workspace</span>
-              <Badge>Ready</Badge>
-            </div>
-            <div className="product-window-body">
-              <aside className="preview-nav">
-                <strong>Workspace</strong>
-                {["Overview", "Documents", "Exceptions", "Records"].map((item, index) => (
-                  <span className={index === 0 ? "active" : ""} key={item}>
-                    <i /> {item}
-                  </span>
-                ))}
-              </aside>
-              <div className="preview-content">
-                <div className="preview-heading">
-                  <div><small>GOOD MORNING</small><h2>Your financial workflow, at a glance.</h2></div>
-                  <span className="preview-avatar">AT</span>
-                </div>
-                <div className="preview-stats">
-                  {[["42", "Processed"], ["7", "Needs review"], ["98%", "Validated"]].map(([value, label]) => (
-                    <div key={label}><span>{label}</span><strong>{value}</strong><small>Updated just now</small></div>
-                  ))}
-                </div>
-                <div className="preview-grid">
-                  <div className="preview-chart">
-                    <div><strong>Processing volume</strong><span>Last 7 days</span></div>
-                    <div className="preview-bars">
-                      {[44, 68, 52, 84, 61, 92, 75].map((height, index) => <i key={index} style={{ height: `${height}%` }} />)}
-                    </div>
-                  </div>
-                  <div className="preview-activity">
-                    <div><strong>Recent activity</strong><span>Live</span></div>
-                    {["Invoice validated", "Record standardised", "Review assigned"].map((item, index) => (
-                      <p key={item}><i className={`activity-dot dot-${index}`} /><span>{item}</span><small>{index + 1}m</small></p>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-        <section className="landing-features">
+        <ModuleDeck />
+        <section className="landing-features" id="workspace">
           <div className="section-heading">
-            <span>ONE CONNECTED WORKSPACE</span>
-            <h2>Designed to make complex accounting feel simple.</h2>
-            <p>Give every role the clarity to move faster, without losing control or context.</p>
+            <span>WHAT THE SYSTEM DOES</span>
+            <h2>From a document to a record you can trust.</h2>
+            <p>
+              Four jobs cover the project: read the document, check it,
+              standardise it, and show whether the system is fast and accurate
+              enough.
+            </p>
           </div>
-          <div className="feature-cards">
+          <div className="topic-cards">
             {[
-              [Sparkles, "Intelligent extraction", "Turn invoices into structured, review-ready data with confidence signals."],
-              [Zap, "Faster exception handling", "Route mismatches to the right person and keep every correction traceable."],
-              [BarChart3, "Operational visibility", "See processing health, workload, and validation outcomes in one place."],
-              [Users, "Built for every role", "Focused workspaces for platform administrators, company admins, and accountants."],
-            ].map(([Icon, title, copy]) => (
-              <article key={String(title)}>
-                <span className="feature-icon"><Icon size={21} /></span>
-                <h3>{String(title)}</h3>
-                <p>{String(copy)}</p>
-              </article>
-            ))}
+              [ScanLine, "Field extraction", "Reads supplier, date, line items, tax, and total from invoices, bills, and receipts so the team stops typing them in.", "Target ≥ 95% on the pilot set"],
+              [ShieldAlert, "Validation and exceptions", "Checks that the amounts agree, then sends every mismatch to a person. Nothing questionable becomes a record on its own.", "Exception rate under 10%"],
+              [FileCheck2, "Standardised records", "Turns a checked document into one accounting record shape, ready for a downstream system without rework.", "Manual entry cut by about 70%"],
+              [Gauge, "Speed and volume", "Measures how fast and how accurately the workspace handles documents, including many submitted at the same time.", "About 20 seconds a document"],
+            ].map(([Icon, title, copy, mark], index) => {
+              const I = Icon as typeof ScanLine;
+              return (
+                <article key={String(title)}>
+                  <div>
+                    <span>0{index + 1}</span>
+                    <I size={18} />
+                  </div>
+                  <h3>{String(title)}</h3>
+                  <p>{String(copy)}</p>
+                  <strong>{String(mark)}</strong>
+                </article>
+              );
+            })}
           </div>
         </section>
-        <section className="workflow-strip">
-          {[
-            "Upload",
-            "Extract",
-            "Validate",
-            "Review",
-            "Standardise",
-            "Export",
-          ].map((step, i) => (
-            <div key={step}>
-              <span>0{i + 1}</span>
-              <strong>{step}</strong>
-              {i < 5 && <ArrowRight size={16} />}
-            </div>
-          ))}
+        <section className="step-board" id="process">
+          <div className="section-heading">
+            <span>THE SIX STEPS</span>
+            <h2>What each step is for.</h2>
+            <p>
+              A document only becomes a standardised record after these six
+              steps. The later ones exist so a bad extraction is never treated
+              as finished.
+            </p>
+          </div>
+          <ol>
+            {[
+              ["Upload", "The document comes in as an invoice, a bill, or a receipt. This is the only manual step before extraction starts."],
+              ["Extract", "The system pulls the accounting fields: who billed you, the date, each line, the tax, and the total."],
+              ["Validate", "Those fields are checked against each other. A total that does not add up, or a missing value, fails here."],
+              ["Review", "Failed documents become exceptions. They go to the right person, and every correction stays on the document."],
+              ["Standardise", "A document that passes is written as one record, with the same fields every time."],
+              ["Export", "The standardised record can leave the workspace. Tax filing, payment, and a live ledger are out of scope."],
+            ].map(([name, detail], index) => (
+              <li key={name}>
+                <span>Step 0{index + 1}</span>
+                <h3>{name}</h3>
+                <p>{detail}</p>
+              </li>
+            ))}
+          </ol>
         </section>
 
         <section className="landing-final-cta">
           <div>
-            <span>READY FOR A CLEARER CLOSE?</span>
-            <h2>Clean data. Clear records. Confident accounting.</h2>
+            <span>READY TO TRY THE WORKSPACE?</span>
+            <h2>Clean extraction. Checked records. A standard you can export.</h2>
           </div>
 
           <div className="actions">
             <Link href="/request-access" className="btn primary">
-              Register enterprise <ArrowRight size={16} />
+              Register enterprise
             </Link>
 
             <Link href="/login" className="btn">
@@ -338,8 +460,23 @@ export function PublicPage({ page }: { page: string }) {
           </div>
         </section>
 
-        <footer className="public-footer">
-          <span>ACCOUNTING INTELLIGENCE · SAIC</span>
+        <footer className="landing-footer">
+          <div>
+            <strong>Accounting Intelligence</strong>
+            <p>AI-driven invoice processing and automated record standardisation. A SAIC proof of concept for finance teams.</p>
+          </div>
+          <div>
+            <span>ON THIS PAGE</span>
+            <a href="#workspace">What the system does</a>
+            <a href="#process">The six steps</a>
+            <Link href="/request-access">Register an enterprise</Link>
+            <Link href="/help">Help</Link>
+          </div>
+          <div>
+            <span>IN SCOPE</span>
+            <p>Ingestion, field extraction, validation, exception review, standardised records, and performance. Not tax filing, payment, or a live general ledger.</p>
+          </div>
+          <small>SAIC · ACCOUNTING INTELLIGENCE</small>
         </footer>
       </div>
     );
