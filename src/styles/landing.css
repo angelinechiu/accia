@@ -594,3 +594,39 @@
   .register-split { padding: 24px 16px 56px; }
   .register-story h1 { max-width: none; }
 }
+
+.help-wash .help-page-main {
+  display: grid;
+  gap: 22px;
+  width: min(100%, 52rem);
+  margin: 0 auto;
+  padding: 36px 35px 72px;
+}
+
+.help-wash .help-page-copy h1 {
+  margin: 10px 0 0;
+  color: #2a3a4a;
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1.05;
+}
+
+.help-wash .help-page-copy h1 span {
+  display: block;
+  color: #7aa8c8;
+}
+
+.help-wash .help-page-panel {
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  border-radius: 1.6rem;
+  padding: 12px 8px 20px;
+  background: linear-gradient(168deg, rgba(255, 255, 255, 0.82), rgba(215, 241, 255, 0.5));
+  box-shadow: 0 20px 44px rgba(42, 58, 74, 0.1);
+}
+
+.help-wash .help-intro h2 { color: #2a3a4a; }
+
+@media (max-width: 760px) {
+  .help-wash .help-page-main { padding: 24px 16px 48px; }
+}

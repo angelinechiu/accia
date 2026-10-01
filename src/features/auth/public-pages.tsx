@@ -12,7 +12,6 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { LandingPage } from "@/features/auth/landing-page";
-import { PublicHeader } from "@/components/common/layout/public-header";
 import { Badge, Field, ErrorState } from "@/components/common/ui";
 import { HelpCenter } from "@/features/common/help/help-center";
 import {
@@ -103,24 +102,35 @@ export function PublicPage({ page }: { page: string }) {
   }
   if (page === "help")
     return (
-      <div className="landing help-page">
-        <PublicHeader active="help" />
+      <div className="home-wash auth-wash help-wash">
+        <header className="hp-header">
+          <Link href="/" className="hp-brand">
+            Accounting
+            <span>Intelligence.</span>
+          </Link>
+          <nav>
+            <Link href="/request-access" className="hp-register">
+              Register enterprise
+            </Link>
+            <Link href="/login" className="hp-login">
+              Log in
+            </Link>
+          </nav>
+        </header>
         <main className="help-page-main">
-          <div className="section-heading help-page-heading">
-            <span>SUPPORT CENTRE</span>
-            <h1>Tutorial and enterprise helpline</h1>
-            <p>
-              Learn the Accounting Intelligence workflow, or request assistance
-              from the SAIC support team when you need a human response.
+          <div className="help-page-copy">
+            <p className="hp-eyebrow">Support</p>
+            <h1>
+              Tutorial and <span>enterprise helpline.</span>
+            </h1>
+            <p className="hp-lead">
+              Learn the workflow, or ask SAIC for help. The same guide opens inside the workspace.
             </p>
           </div>
           <div className="help-page-panel">
             <HelpCenter />
           </div>
         </main>
-        <footer className="public-footer">
-          <span>ACCOUNTING INTELLIGENCE · SAIC</span>
-        </footer>
       </div>
     );
 

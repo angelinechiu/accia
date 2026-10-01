@@ -4534,6 +4534,21 @@ dialog:has(.help-center) {
   width: min(760px, calc(100% - 30px));
   max-height: min(88vh, 900px);
   overflow: auto;
+  border: 1px solid #c5e4f4;
+  border-radius: 20px;
+  background: #f7fbfd;
+}
+
+dialog:has(.help-center) .modal-heading {
+  border-bottom-color: #c5e4f4;
+  background: #e7f6fd;
+}
+
+dialog:has(.help-center) .modal-heading h2 { color: #2a3a4a; }
+
+dialog:has(.help-center) .icon-btn:hover {
+  background: #fff;
+  color: #2a3a4a;
 }
 
 dialog::backdrop {
@@ -5167,9 +5182,8 @@ dialog {
   width: 44px;
   height: 44px;
   border-radius: 12px;
-  background: linear-gradient(145deg, #022fa2 0%, #061433 100%);
-  color: #ffffff;
-  box-shadow: 0 8px 20px rgba(2, 47, 162, 0.28);
+  background: #2a3a4a;
+  color: #f6f1e8;
   flex-shrink: 0;
 }
 
@@ -5188,9 +5202,9 @@ dialog {
   display: inline-flex;
   gap: 4px;
   padding: 4px;
-  border-radius: 12px;
-  background: #eef4fc;
-  border: 1px solid #d9e6f7;
+  border-radius: 999px;
+  background: #e7f6fd;
+  border: 1px solid #c5e4f4;
   width: fit-content;
 }
 
@@ -5199,22 +5213,22 @@ dialog {
   align-items: center;
   gap: 7px;
   padding: 9px 14px;
-  border-radius: 9px;
+  border-radius: 999px;
   font-size: 12px;
   font-weight: 600;
-  color: #4f6385;
+  color: #5e7384;
   transition: all var(--transition-fast);
 }
 
 .help-tabs button:hover {
-  color: #022fa2;
+  color: #2a3a4a;
   background: rgba(255, 255, 255, 0.7);
 }
 
 .help-tabs button.active {
-  background: #ffffff;
-  color: #022fa2;
-  box-shadow: var(--shadow-sm);
+  background: #2a3a4a;
+  color: #f6f1e8;
+  box-shadow: none;
 }
 
 .help-tutorial-banner,
@@ -5223,9 +5237,9 @@ dialog {
   gap: 12px;
   align-items: flex-start;
   padding: 14px 16px;
-  border-radius: 12px;
-  background: linear-gradient(135deg, #eaf5ff 0%, #f7fbff 100%);
-  border: 1px solid #d3e5fa;
+  border-radius: 14px;
+  background: #e7f6fd;
+  border: 1px solid #c5e4f4;
   margin-bottom: 16px;
 }
 
@@ -5237,18 +5251,18 @@ dialog {
 .help-tutorial-banner p,
 .help-helpline-banner span {
   font-size: 12.5px;
-  color: #4f6385;
+  color: #5e7384;
   line-height: 1.55;
 }
 
 .help-helpline-banner strong {
   display: block;
   margin-bottom: 2px;
-  color: #061433;
+  color: #2a3a4a;
 }
 
 .help-helpline-banner > svg {
-  color: #022fa2;
+  color: #7aa8c8;
   margin-top: 2px;
 }
 
@@ -5267,24 +5281,16 @@ dialog {
   gap: 12px;
   align-items: start;
   padding: 14px 16px;
-  border-radius: 12px;
-  border: 1px solid #e4eef9;
+  border-radius: 14px;
+  border: 1px solid #e3ebf0;
   background: #ffffff;
-  transition:
-    border-color var(--transition-fast),
-    box-shadow var(--transition-fast);
-}
-
-.help-steps li:hover {
-  border-color: #c5daf5;
-  box-shadow: var(--shadow-sm);
 }
 
 .help-step-index {
   font-size: 11px;
   font-weight: 800;
   letter-spacing: 0.06em;
-  color: #022fa2;
+  color: #7aa8c8;
   min-width: 22px;
   padding-top: 2px;
 }
@@ -5295,14 +5301,14 @@ dialog {
   width: 36px;
   height: 36px;
   border-radius: 10px;
-  background: #eaf5ff;
-  color: #022fa2;
+  background: #e7f6fd;
+  color: #2a3a4a;
 }
 
 .help-steps strong {
   display: block;
   font-size: 13px;
-  color: #061433;
+  color: #2a3a4a;
   margin-bottom: 3px;
 }
 
@@ -5311,9 +5317,16 @@ dialog {
   line-height: 1.55;
 }
 
-.help-success {
-  margin-top: 4px;
+.help-tutorial-banner .badge {
+  background: #2a3a4a;
+  color: #f6f1e8;
 }
+
+.help-success,
+.help-success h2,
+.help-success p { color: #2a3a4a; }
+
+.help-success svg { color: #7aa8c8; }
 
 .btn.full {
   width: 100%;
