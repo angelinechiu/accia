@@ -7,6 +7,7 @@ import {
   FileText,
   Plus,
   UploadCloud,
+  Camera,
   CheckCircle2,
 } from "lucide-react";
 import type { RecordCategory, User } from "@/types";
@@ -28,6 +29,7 @@ import {
   SearchInput,
   formatDate,
 } from "@/components/common/ui";
+import { CameraCapture } from "@/features/common/documents/camera-capture";
 export function DocumentList({ user }: { user: User }) {
   const base = user.role === "LOCAL_ADMIN" ? "/company" : "/workspace";
   const { data, error, loading, refresh } = useResource(
@@ -140,6 +142,7 @@ export function UploadPage({ user }: { user: User }) {
   const [stage, setStage] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+  const [camera, setCamera] = useState(false);
   const base = user.role === "LOCAL_ADMIN" ? "/company" : "/workspace";
   async function start() {
     if (!files.length) {
@@ -183,6 +186,24 @@ export function UploadPage({ user }: { user: User }) {
         >
           <div className="panel-body">
             {error && <ErrorState message={error} />}
+            <div className="upload-sources">
+              <button type="button" className="btn" disabled={busy} onClick={() => input.current?.click()}>
+                <UploadCloud size={16} /> Upload from device
+              </button>
+              <button type="button" className="btn primary" disabled={busy} onClick={() => setCamera(true)}>
+                <Camera size={16} /> Use camera
+              </button>
+            </div>
+            {camera ? (
+              <CameraCapture
+                onClose={() => setCamera(false)}
+                onConfirm={(file) => {
+                  setFiles((current) => [...current, file]);
+                  setCamera(false);
+                  setError("");
+                }}
+              />
+            ) : (
             <button
               type="button"
               className={`drop-zone ${dragging ? "dragging" : ""}`}
@@ -219,6 +240,7 @@ export function UploadPage({ user }: { user: User }) {
                 file
               </small>
             </button>
+            )}
             <input
               ref={input}
               hidden
