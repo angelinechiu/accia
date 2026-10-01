@@ -6,13 +6,10 @@ import {
   ArrowRight,
   Check,
   CheckCircle2,
-  FileCheck2,
   LockKeyhole,
-  ScanLine,
-  Upload,
+  ShieldCheck,
 } from "lucide-react";
 import { LandingPage } from "@/features/auth/landing-page";
-import { Brand } from "@/components/common/layout/app-shell";
 import { PublicHeader } from "@/components/common/layout/public-header";
 import { Badge, Field, ErrorState } from "@/components/common/ui";
 import { HelpCenter } from "@/features/common/help/help-center";
@@ -127,54 +124,34 @@ export function PublicPage({ page }: { page: string }) {
 
   if (!page) return <LandingPage />;
   return (
-    <div className="auth-page">
-      <aside className="auth-aside">
-        <Link href="/">
-          <Brand />
+    <div className="home-wash auth-wash">
+      <header className="hp-header">
+        <Link href="/" className="hp-brand">
+          Accounting
+          <span>Intelligence.</span>
         </Link>
-        <div>
-          <div className="eyebrow">ACCOUNTING INTELLIGENCE</div>
-          <h1>
-            Precision for every
-            <br />
-            financial document.
-          </h1>
-          <p>
-            Enterprise-grade invoice intelligence, exception control, and
-            standardised records in one workspace.
-          </p>
-          <div className="auth-features">
-            {[
-              [Upload, "Documents, organised"],
-              [ScanLine, "Intelligence, applied"],
-              [FileCheck2, "Records, standardised"],
-            ].map(([Icon, text]) => {
-              const I = Icon as typeof Upload;
-              return (
-                <div key={String(text)}>
-                  <I size={19} />
-                  <span>{String(text)}</span>
-                  <Check size={15} />
-                </div>
-              );
-            })}
-          </div>
-        </div>
-        <small>SAIC · Enterprise Accounting Intelligence</small>
-      </aside>
-      <main className="auth-content">
-        <div className="auth-top-links">
-          <Link href="/" className="back-link">
-            ← Back to home
+        <nav>
+          <Link href="/help">Help</Link>
+          <Link href="/request-access" className="hp-register">
+            Register enterprise
           </Link>
-          <Link href="/help" className="back-link auth-help-link">
-            Help & tutorial
+          <Link href="/login" className="hp-login">
+            Log in
           </Link>
-        </div>
-        <div className={`auth-form ${page === "request-access" ? "wide" : ""}`}>
+        </nav>
+      </header>
+      <main className="auth-stage">
+        <div className={`auth-card ${page === "request-access" ? "wide" : ""}`}>
           <span className="auth-icon">
-            <LockKeyhole size={23} />
+            <LockKeyhole size={20} />
           </span>
+          <p className="hp-eyebrow">
+            {page === "request-access"
+              ? "Enterprise registration"
+              : page === "forgot-password" || page === "reset-password"
+                ? "Account access"
+                : "Workspace sign in"}
+          </p>
           <h1>{titles[page] ?? "Page not found"}</h1>
           <p>
             {page === "login"
