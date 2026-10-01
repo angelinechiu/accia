@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { useEffect } from "react";
 import {
   Building2,
   Users,
@@ -50,6 +51,13 @@ export function Dashboard({ user }: { user: User }) {
     }),
     user.id,
   );
+  useEffect(() => {
+    if (admin || local) return;
+    const timer = window.setInterval(() => {
+      void refresh();
+    }, 3000);
+    return () => window.clearInterval(timer);
+  }, [admin, local, refresh]);
   if (loading) return <LoadingState />;
   if (error || !data) return <ErrorState message={error} retry={refresh} />;
   const completed = data.docs.filter((d) => d.status === "COMPLETED").length;
@@ -161,7 +169,6 @@ export function Dashboard({ user }: { user: User }) {
           openExceptions={open}
           completed={completed}
           processing={processing}
-          metrics={data.metrics}
         />
       ) : (
         <>

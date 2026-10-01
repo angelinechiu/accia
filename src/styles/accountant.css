@@ -140,30 +140,33 @@
 
 .acct-tile {
   display: flex;
-  min-height: 176px;
+  min-height: 248px;
   flex-direction: column;
-  border: 1px solid #e3ebf0;
-  border-top: 4px solid var(--tile, #2f80ed);
-  border-radius: 8px;
+  border: 1px solid #e6eaf2;
+  border-top: 4px solid var(--tile, #0095eb);
+  border-radius: 12px;
   background: #fff;
-  padding: 14px 14px 12px;
+  padding: 16px 16px 14px;
   box-shadow: 0 1px 2px rgba(42, 58, 74, 0.05);
 }
 
-.acct-tile.wide { grid-column: span 2; }
+.acct-tile.wide { grid-column: span 2; min-height: 320px; }
 
 .acct-tile h3 {
+  display: inline-block;
   margin: 0;
-  color: #5e7384;
-  font-size: 13px;
-  font-weight: 600;
+  border-bottom: 3px solid #7a5af8;
+  padding-bottom: 4px;
+  color: #344054;
+  font-size: 14px;
+  font-weight: 650;
 }
 
 .acct-tile strong {
   display: block;
-  margin-top: 6px;
-  color: var(--tile, #2a3a4a);
-  font-size: 28px;
+  margin-top: 10px;
+  color: var(--tile, #0095eb);
+  font-size: 36px;
   font-weight: 700;
   letter-spacing: -0.04em;
   line-height: 1;
@@ -177,15 +180,13 @@
 
 .acct-spark {
   width: 100%;
-  height: 64px;
+  height: 132px;
   margin-top: auto;
-  color: #7aa8c8;
 }
 
 .acct-spark polyline {
   fill: none;
-  stroke: currentColor;
-  stroke-width: 2.5;
+  stroke-width: 3;
   stroke-linejoin: round;
   stroke-linecap: round;
 }
@@ -193,8 +194,8 @@
 .acct-bars {
   display: flex;
   align-items: end;
-  gap: 8px;
-  height: 72px;
+  gap: 10px;
+  height: 160px;
   margin-top: auto;
 }
 
@@ -211,9 +212,9 @@
 .acct-bars i {
   display: block;
   width: 100%;
-  max-width: 28px;
-  border-radius: 4px 4px 2px 2px;
-  background: #2f80ed;
+  max-width: 36px;
+  border-radius: 6px 6px 2px 2px;
+  background: #0095eb;
 }
 
 .acct-bars small {
@@ -227,9 +228,9 @@
 
 .acct-meter span {
   display: block;
-  height: 10px;
+  height: 14px;
   border-radius: 999px;
-  background: #2f80ed;
+  background: #0095eb;
 }
 
 .acct-mix {
@@ -241,8 +242,8 @@
 
 .acct-donut {
   position: relative;
-  width: 78px;
-  height: 78px;
+  width: 132px;
+  height: 132px;
   flex: none;
   border-radius: 50%;
 }
@@ -250,7 +251,7 @@
 .acct-donut::after {
   content: "";
   position: absolute;
-  inset: 18px;
+  inset: 34px;
   border-radius: 50%;
   background: #fff;
 }
