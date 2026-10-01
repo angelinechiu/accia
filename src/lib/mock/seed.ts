@@ -227,6 +227,7 @@ export function seedDatabase(): Database {
       invitedBy,
       invitedAt: "2026-09-10",
       lastLogin: status === "ACTIVE" ? "2026-09-17T07:42:00" : "—",
+      mustChangePassword: role === "ACCOUNTANT" && status === "ACTIVE",
     })),
   ];
   const documents: Database["documents"] = Array.from(

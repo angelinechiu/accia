@@ -6,11 +6,19 @@ async function signIn(page: Page, email: string) {
   await page.getByLabel("Password *", { exact: true }).fill("WorkspacePassword!");
   await page.getByRole("button", { name: "Continue with email" }).click();
   await page.getByRole("link", { name: /Continue to dashboard/ }).click();
-  await expect(
-    page.getByRole("heading", {
-      name: /Platform overview|Company overview|Welcome back/,
-    }),
-  ).toBeVisible();
+  const dashboard = page.getByRole("heading", {
+    name: /Platform overview|Company overview|Welcome back/,
+  });
+  const forced = page.getByRole("heading", { name: "Choose a new password" });
+  await expect(dashboard.or(forced)).toBeVisible();
+  if (await forced.isVisible()) {
+    await page.getByLabel("New password", { exact: true }).fill("WorkspacePassword!");
+    await page
+      .getByLabel("Confirm new password", { exact: true })
+      .fill("WorkspacePassword!");
+    await page.getByRole("button", { name: "Save password" }).click();
+  }
+  await expect(dashboard).toBeVisible();
 }
 test("desktop and mobile layouts, navigation, and tenant isolation", async ({
   page,
