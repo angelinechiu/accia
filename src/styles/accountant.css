@@ -12,18 +12,78 @@
 }
 
 .app-shell[data-role="accountant"] .sidebar {
-  background: #2a3a4a;
-  border-right-color: transparent;
+  background: #e7f6fd;
+  color: #2a3a4a;
+  border-right: 1px solid #c5e4f4;
+  box-shadow: none;
 }
 
-.app-shell[data-role="accountant"] .workspace-label,
+.app-shell[data-role="accountant"] .sidebar .brand {
+  color: #2a3a4a;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+}
+
+.app-shell[data-role="accountant"] .brand-symbol {
+  display: none;
+}
+
+.app-shell[data-role="accountant"] .brand-second,
+.app-shell[data-role="accountant"] .brand-period {
+  color: #7aa8c8;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+.app-shell[data-role="accountant"] .workspace-label {
+  background: rgba(255, 255, 255, 0.72);
+  border-color: #c5e4f4;
+}
+
+.app-shell[data-role="accountant"] .workspace-label strong {
+  color: #2a3a4a;
+}
+
+.app-shell[data-role="accountant"] .workspace-label div span,
+.app-shell[data-role="accountant"] .system-health,
+.app-shell[data-role="accountant"] .sidebar-version,
+.app-shell[data-role="accountant"] .nav-label {
+  color: #5e7384;
+}
+
 .app-shell[data-role="accountant"] .workspace-icon {
-  background: #243246;
+  background: #2a3a4a;
+  color: #f6f1e8;
+}
+
+.app-shell[data-role="accountant"] .nav-item {
+  color: #5e7384;
+}
+
+.app-shell[data-role="accountant"] .nav-item:hover {
+  background: rgba(255, 255, 255, 0.75);
+  color: #2a3a4a;
+  transform: none;
 }
 
 .app-shell[data-role="accountant"] .nav-item.active {
-  background: #3d5166;
-  border-left-color: #d7f1ff;
+  background: #2a3a4a;
+  color: #f6f1e8;
+  border-left: 0;
+  border-radius: 999px;
+  box-shadow: none;
+}
+
+.app-shell[data-role="accountant"] .nav-separator {
+  border-top-color: #c5e4f4;
+}
+
+.app-shell[data-role="accountant"] .nav-count {
+  background: #d7f1ff;
+  color: #2a3a4a;
   box-shadow: none;
 }
 
