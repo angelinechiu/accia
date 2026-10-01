@@ -6,7 +6,9 @@ import {
   ArrowRight,
   Check,
   CheckCircle2,
+  FileCheck,
   LockKeyhole,
+  Scan,
   ShieldCheck,
 } from "lucide-react";
 import { LandingPage } from "@/features/auth/landing-page";
@@ -141,7 +143,94 @@ export function PublicPage({ page }: { page: string }) {
           </Link>
         </nav>
       </header>
-      <main className={accessPage ? "hp-hero auth-hero" : "auth-stage"}>
+      <main
+        className={
+          page === "request-access"
+            ? "register-split"
+            : accessPage
+              ? "hp-hero auth-hero"
+              : "auth-stage"
+        }
+      >
+        {page === "request-access" && (
+          <section className="register-story">
+            <p className="hp-eyebrow">Enterprise registration</p>
+            <h1>
+              Register your enterprise and turn invoices into{" "}
+              <span>trusted records.</span>
+            </h1>
+            <p className="hp-lead">
+              Request a company workspace. SAIC reviews it before anyone can sign in.
+            </p>
+            <p className="register-how">What the workspace is for</p>
+            <ul className="register-points">
+              <li>
+                <Check size={16} strokeWidth={2.6} aria-hidden="true" />
+                <span>Extract supplier, date, tax, and total from invoices, bills, and receipts.</span>
+              </li>
+              <li>
+                <Check size={16} strokeWidth={2.6} aria-hidden="true" />
+                <span>Send every mismatch to a person. Nothing questionable becomes a record on its own.</span>
+              </li>
+              <li>
+                <Check size={16} strokeWidth={2.6} aria-hidden="true" />
+                <span>Write one standard record shape, ready to export.</span>
+              </li>
+            </ul>
+            <p className="register-note">
+              No live ledger, tax filing, or payment. This request only opens a company workspace.
+            </p>
+            <div className="register-preview">
+              <p className="record-chip">
+                <span className="record-chip-mark" aria-hidden="true">
+                  <Check size={13} strokeWidth={2.6} />
+                </span>
+                From document to decision
+              </p>
+              <article className="record-sheet">
+                <div className="record-row">
+                  <span className="record-mark" aria-hidden="true">
+                    <FileCheck size={20} strokeWidth={2.2} />
+                  </span>
+                  <span className="record-status">
+                    <i />
+                    Validated
+                  </span>
+                </div>
+                <p className="record-kicker">Standardised accounting record</p>
+                <h2>Everything in its right place.</h2>
+                <dl className="record-meta">
+                  <div>
+                    <dt>Supplier</dt>
+                    <dd>Atlas Office Supplies</dd>
+                  </div>
+                  <div>
+                    <dt>Invoice</dt>
+                    <dd>INV-2026-00821</dd>
+                  </div>
+                </dl>
+                <div className="record-lines">
+                  <p>
+                    <span>Office supplies</span>
+                    <strong>RM 800.00</strong>
+                  </p>
+                  <p>
+                    <span>Tax · 6%</span>
+                    <strong>RM 48.00</strong>
+                  </p>
+                  <p className="total">
+                    <span>Total amount</span>
+                    <strong>RM 848.00</strong>
+                  </p>
+                </div>
+                <p className="record-ready">
+                  <Scan size={16} strokeWidth={2.2} aria-hidden="true" />
+                  Extracted. Validated. Ready to export.
+                </p>
+              </article>
+            </div>
+          </section>
+        )}
         {accessPage && (
           <div>
             <p className="hp-eyebrow">Enterprise accounting intelligence</p>
@@ -173,8 +262,10 @@ export function PublicPage({ page }: { page: string }) {
             </p>
           </div>
         )}
-        <div className={`auth-card ${page === "request-access" ? "wide" : ""}`}>
-          {!accessPage && (
+        <div
+          className={`auth-card${page === "request-access" ? " register-card" : ""}${page === "login" ? " login-card" : ""}`}
+        >
+          {!accessPage && page !== "request-access" && (
             <>
               <span className="auth-icon">
                 <LockKeyhole size={20} />
@@ -196,6 +287,13 @@ export function PublicPage({ page }: { page: string }) {
                       ? "Choose a strong password to keep your workspace secure."
                       : "Secure access starts with your company email."}
               </p>
+            </>
+          )}
+          {page === "request-access" && !success && (
+            <>
+              <p className="hp-eyebrow">Company details</p>
+              <h2>Register your enterprise</h2>
+              <p>Complete the form. SAIC reviews the request before the workspace opens.</p>
             </>
           )}
           {accessPage && !success && (

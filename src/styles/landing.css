@@ -468,3 +468,124 @@
   .auth-wash .auth-card { padding: 1.35rem 1.1rem 1.2rem; border-radius: 1.35rem; }
   .auth-wash .form-grid { grid-template-columns: 1fr; }
 }
+
+/* Register: story on the left, form card on the right. */
+.register-split {
+  display: grid;
+  align-items: start;
+  gap: 32px;
+  width: min(100%, 90rem);
+  margin: 0 auto;
+  padding: 28px 40px 72px;
+}
+
+.register-story h1 {
+  max-width: 16ch;
+  margin-top: 12px;
+  color: #2a3a4a;
+  font-size: clamp(2.1rem, 3.6vw, 2.85rem);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1.08;
+}
+
+.register-story h1 span { display: block; }
+
+.register-story .hp-lead {
+  max-width: 34rem;
+  margin-top: 16px;
+  color: #2a3a4a;
+  font-size: 1.05rem;
+}
+
+.register-story .register-how {
+  margin-top: 22px;
+  color: #2a3a4a;
+  font-weight: 700;
+}
+
+.register-points {
+  display: grid;
+  gap: 12px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.register-points li {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  color: #2a3a4a;
+  line-height: 1.45;
+}
+
+.register-points svg { margin-top: 3px; color: #2a3a4a; }
+
+.register-story .register-note {
+  max-width: 36rem;
+  margin-top: 16px;
+  color: #5e7384;
+}
+
+.register-preview {
+  max-width: 28rem;
+  margin-top: 28px;
+}
+
+.register-preview .record-chip { margin-bottom: -0.7rem; }
+
+.register-preview .record-sheet h2 { font-size: 1.45rem; }
+
+.register-preview .record-ready { max-width: none; }
+
+.auth-wash .register-card {
+  width: 100%;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 10px 32px rgba(42, 58, 74, 0.1);
+  padding: 28px 28px 20px;
+}
+
+.auth-wash .register-card h2 { margin-bottom: 8px; }
+
+.auth-wash .register-card > p:not(.hp-eyebrow) { margin-bottom: 18px; }
+
+/* Login form sits nearer the middle and is larger. */
+@media (min-width: 1024px) {
+  .auth-wash .hp-hero.auth-hero:has(.login-card) {
+    grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.28fr);
+    column-gap: 20px;
+    justify-items: stretch;
+  }
+}
+
+.auth-wash .auth-hero .login-card {
+  width: min(100%, 720px);
+  justify-self: start;
+  padding: 2.5rem 2.4rem 1.9rem;
+}
+
+.auth-wash .login-card h2 {
+  margin-bottom: 28px;
+  font-size: 2rem;
+}
+
+.auth-wash .login-card .field input {
+  min-height: 52px;
+  border-radius: 12px;
+  font-size: 16px;
+}
+
+@media (min-width: 960px) {
+  .register-split {
+    grid-template-columns: minmax(0, 1.08fr) minmax(340px, 0.92fr);
+    gap: 48px;
+    align-items: start;
+  }
+}
+
+@media (max-width: 959px) {
+  .register-split { padding: 24px 16px 56px; }
+  .register-story h1 { max-width: none; }
+}
