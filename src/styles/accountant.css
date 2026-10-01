@@ -87,6 +87,16 @@
   box-shadow: none;
 }
 
+.app-shell[data-role="accountant"] .sidebar-pin:hover {
+  background: rgba(255, 255, 255, 0.75);
+  color: #2a3a4a;
+}
+
+.app-shell[data-role="accountant"] .sidebar.rail .brand-mark {
+  background: #2a3a4a;
+  color: #f6f1e8;
+}
+
 .app-shell[data-role="accountant"] .app-main,
 .app-shell[data-role="accountant"] .content {
   background: #f4f6f7;
