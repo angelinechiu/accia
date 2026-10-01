@@ -10,7 +10,7 @@ import {
   Camera,
   CheckCircle2,
 } from "lucide-react";
-import type { RecordCategory, User } from "@/types";
+import type { DocumentKind, RecordCategory, User } from "@/types";
 import { useResource } from "@/features/common/hooks/use-resource";
 import {
   advanceProcessing,
@@ -88,7 +88,8 @@ export function DocumentList({ user }: { user: User }) {
         <DataTable
           rows={data.filter(
             (d) =>
-              d.name.toLowerCase().includes(search.toLowerCase()) &&
+              (d.name.toLowerCase().includes(search.toLowerCase()) ||
+                d.id.toLowerCase().includes(search.toLowerCase())) &&
               (!status || d.status === status) &&
               (!date || d.createdAt.startsWith(date)),
           )}
@@ -138,6 +139,7 @@ export function UploadPage({ user }: { user: User }) {
   const [files, setFiles] = useState<File[]>([]);
   const [scenario, setScenario] = useState("mismatch");
   const [category, setCategory] = useState<RecordCategory>("ACCOUNTS_PAYABLE");
+  const [kind, setKind] = useState<DocumentKind>("INVOICE");
   const [dragging, setDragging] = useState(false);
   const [stage, setStage] = useState("");
   const [error, setError] = useState("");
@@ -154,7 +156,7 @@ export function UploadPage({ user }: { user: User }) {
     try {
       for (const file of files) {
         setStage(`Uploading ${file.name}`);
-        const doc = await uploadDocument(user, file, scenario, category);
+        const doc = await uploadDocument(user, file, scenario, category, kind);
         for (const step of [
           "QUEUED",
           "PROCESSING",
@@ -266,6 +268,20 @@ export function UploadPage({ user }: { user: User }) {
                 </button>
               </div>
             ))}
+            <Field
+              label="Document type"
+              hint="Stored as a unique code for that type, such as INVOICE_100123, BILL_100123, or RECEIPT_100123."
+            >
+              <select
+                value={kind}
+                disabled={busy}
+                onChange={(e) => setKind(e.target.value as DocumentKind)}
+              >
+                <option value="INVOICE">Invoice</option>
+                <option value="BILL">Bill</option>
+                <option value="RECEIPT">Receipt</option>
+              </select>
+            </Field>
             <Field
               label="Accounting category"
               hint="Choose whether this invoice was sent to a customer or received from a supplier."

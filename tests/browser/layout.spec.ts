@@ -88,7 +88,7 @@ test("desktop and mobile layouts, navigation, and tenant isolation", async ({
     ).toHaveCount(0);
   }
   await signIn(page, "rachel@abc.example");
-  await page.goto("/workspace/documents/DOC-1002");
+  await page.goto("/workspace/documents/INVOICE_100002");
   await expect(page.getByLabel("Total Amount", { exact: true })).toHaveValue(
     "8480.00",
   );
@@ -137,7 +137,7 @@ test("desktop and mobile layouts, navigation, and tenant isolation", async ({
       () => document.documentElement.scrollWidth <= window.innerWidth,
     ),
   ).toBeTruthy();
-  await page.goto("/workspace/documents/DOC-1003");
+  await page.goto("/workspace/documents/RECEIPT_100001");
   await expect(
     page.getByRole("heading", { name: "September-receipt.jpg", exact: true }),
   ).toBeVisible();
@@ -152,8 +152,8 @@ test("desktop and mobile layouts, navigation, and tenant isolation", async ({
   ).toBeTruthy();
   await signIn(page, "sarah@xyz.example");
   await page.goto("/workspace/documents");
-  await expect(page.getByText("DOC-1001", { exact: true })).toHaveCount(0);
-  await page.goto("/workspace/documents/DOC-1001");
+  await expect(page.getByText("INVOICE_100001", { exact: true })).toHaveCount(0);
+  await page.goto("/workspace/documents/INVOICE_100001");
   await expect(
     page.getByText("Document not found in your workspace."),
   ).toBeVisible();
