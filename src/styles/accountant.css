@@ -143,6 +143,7 @@
   min-height: 176px;
   flex-direction: column;
   border: 1px solid #e3ebf0;
+  border-top: 4px solid var(--tile, #2f80ed);
   border-radius: 8px;
   background: #fff;
   padding: 14px 14px 12px;
@@ -161,7 +162,7 @@
 .acct-tile strong {
   display: block;
   margin-top: 6px;
-  color: #2a3a4a;
+  color: var(--tile, #2a3a4a);
   font-size: 28px;
   font-weight: 700;
   letter-spacing: -0.04em;
@@ -212,7 +213,7 @@
   width: 100%;
   max-width: 28px;
   border-radius: 4px 4px 2px 2px;
-  background: linear-gradient(180deg, #7aa8c8, #2a3a4a);
+  background: #2f80ed;
 }
 
 .acct-bars small {
@@ -228,7 +229,61 @@
   display: block;
   height: 10px;
   border-radius: 999px;
-  background: #7aa8c8;
+  background: #2f80ed;
+}
+
+.acct-mix {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: auto;
+}
+
+.acct-donut {
+  position: relative;
+  width: 78px;
+  height: 78px;
+  flex: none;
+  border-radius: 50%;
+}
+
+.acct-donut::after {
+  content: "";
+  position: absolute;
+  inset: 18px;
+  border-radius: 50%;
+  background: #fff;
+}
+
+.acct-legend {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.acct-legend li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #5e7384;
+  font-size: 12px;
+}
+
+.acct-legend i {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+}
+
+.acct-tile .acct-legend strong {
+  margin: 0;
+  color: #2a3a4a;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1.2;
 }
 
 .acct-meter small {
