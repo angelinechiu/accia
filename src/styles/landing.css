@@ -82,6 +82,11 @@
   color: #f6f1e8 !important;
   font-weight: 600;
 }
+.hp-header nav button.hp-login {
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-size: 14px;
+}
 .hp-header nav a:hover { background: #f6f1e8; color: #2a3a4a; }
 .hp-login:hover { background: #7aa8c8 !important; color: #2a3a4a !important; }
 
