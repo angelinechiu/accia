@@ -123,6 +123,7 @@ export function PublicPage({ page }: { page: string }) {
     );
 
   if (!page) return <LandingPage />;
+  const accessPage = page === "login" || page === "forgot-password";
   return (
     <div className="home-wash auth-wash">
       <header className="hp-header">
@@ -140,30 +141,74 @@ export function PublicPage({ page }: { page: string }) {
           </Link>
         </nav>
       </header>
-      <main className="auth-stage">
+      <main className={accessPage ? "hp-hero auth-hero" : "auth-stage"}>
+        {accessPage && (
+          <div>
+            <p className="hp-eyebrow">Enterprise accounting intelligence</p>
+            <p className="hp-quiet">
+              {page === "login"
+                ? "SAIC secure · company email opens the workspace"
+                : "Reset stays inside this workspace"}
+            </p>
+            <h1>
+              {page === "login" ? (
+                <>
+                  Sign in to the <span>workspace.</span>
+                </>
+              ) : (
+                <>
+                  Forgot your <span>password?</span>
+                </>
+              )}
+            </h1>
+            <p className="hp-lead">
+              {page === "login"
+                ? "From invoice to trusted record."
+                : "Use the company email on the account."}
+            </p>
+            <p className="hp-copy">
+              {page === "login"
+                ? "Enter the company email you were issued. That address opens the right workspace. People are invited; there is no public self-signup."
+                : "Enter the company email. This preview records the reset here, then you choose a new password on the next screen. A real email is not sent."}
+            </p>
+          </div>
+        )}
         <div className={`auth-card ${page === "request-access" ? "wide" : ""}`}>
-          <span className="auth-icon">
-            <LockKeyhole size={20} />
-          </span>
-          <p className="hp-eyebrow">
-            {page === "request-access"
-              ? "Enterprise registration"
-              : page === "forgot-password" || page === "reset-password"
-                ? "Account access"
-                : "Workspace sign in"}
-          </p>
-          <h1>{titles[page] ?? "Page not found"}</h1>
-          <p>
-            {page === "login"
-              ? "Sign in to your Accounting Intelligence workspace."
-              : page === "welcome"
-                  ? "Your identity has been verified successfully."
-              : page === "request-access"
-                ? "Submit your company details to register for enterprise access. SAIC will review your request."
+          {!accessPage && (
+            <>
+              <span className="auth-icon">
+                <LockKeyhole size={20} />
+              </span>
+              <p className="hp-eyebrow">
+                {page === "request-access"
+                  ? "Enterprise registration"
                   : page === "reset-password"
-                    ? "Choose a strong password to keep your workspace secure."
-                : "Secure access starts with your company email."}
-          </p>
+                    ? "Account access"
+                    : "Workspace sign in"}
+              </p>
+              <h1>{titles[page] ?? "Page not found"}</h1>
+              <p>
+                {page === "welcome"
+                  ? "Your identity has been verified successfully."
+                  : page === "request-access"
+                    ? "Submit your company details to register for enterprise access. SAIC will review your request."
+                    : page === "reset-password"
+                      ? "Choose a strong password to keep your workspace secure."
+                      : "Secure access starts with your company email."}
+              </p>
+            </>
+          )}
+          {accessPage && !success && (
+            <>
+              <span className="auth-icon">
+                <LockKeyhole size={20} />
+              </span>
+              <p className="hp-eyebrow">
+                {page === "login" ? "Workspace sign in" : "Account access"}
+              </p>
+              <h2>{page === "login" ? "Company credentials" : "Request a reset"}</h2>
+            </>
+          )}
           {page === "welcome" ? (
             <div className="success-state">
               <CheckCircle2 size={40} />
@@ -380,6 +425,11 @@ export function PublicPage({ page }: { page: string }) {
                     <Link href="/help">Need help?</Link>
                   </p>
                 </>
+              )}
+              {page === "forgot-password" && (
+                <p className="form-bottom">
+                  Remembered it? <Link href="/login">Back to sign in</Link>
+                </p>
               )}
               {page === "request-access" && (
                 <p className="form-bottom">

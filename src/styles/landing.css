@@ -330,7 +330,24 @@
   backdrop-filter: blur(26px) saturate(1.45);
 }
 
-.auth-wash .auth-card.wide { width: min(100%, 760px); }
+.auth-wash .auth-hero .auth-card {
+  width: min(100%, 520px);
+  justify-self: end;
+}
+
+.auth-wash .auth-card h2 {
+  margin-top: 10px;
+  margin-bottom: 22px;
+  color: #2a3a4a;
+  font-size: 1.65rem;
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1.1;
+}
+
+@media (max-width: 1023px) {
+  .auth-wash .auth-hero .auth-card { justify-self: stretch; width: min(100%, 520px); }
+}
 
 .auth-wash .auth-icon {
   width: 3.25rem;
