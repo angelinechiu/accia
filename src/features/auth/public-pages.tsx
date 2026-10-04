@@ -543,7 +543,7 @@ export function PublicPage({ page }: { page: string }) {
                   </div>
                 </div>
               )}
-              <button className="btn primary full" disabled={busy}>
+              <button className={`btn primary full${page === "reset-password" ? " reset-submit" : ""}`} disabled={busy}>
                 {busy
                   ? "Please wait…"
                   : page === "login"

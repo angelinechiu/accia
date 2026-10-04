@@ -641,6 +641,8 @@
   font-weight: 650;
 }
 .auth-wash .otp-resend:disabled { color: #8aa0b3; cursor: not-allowed; }
+.auth-wash .reset-submit { padding-top: 10px; }
+
 .auth-wash .otp-wait .form-bottom button.form-link {
   border: 0;
   background: transparent;
