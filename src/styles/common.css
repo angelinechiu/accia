@@ -1279,10 +1279,11 @@ hr {
 }
 
 .password-setup {
-  padding: 18px;
+  margin-bottom: 12px;
+  padding: 18px 20px;
   border: 1px solid #dce9f7;
   border-radius: 14px;
-  background: #f8fbff;
+  background: #f8fbff;  
 }
 
 .password-setup-heading {
