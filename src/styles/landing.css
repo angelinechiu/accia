@@ -605,13 +605,18 @@
   .auth-wash .hp-hero.auth-hero:has(.reset-card) {
     grid-template-columns: minmax(16rem, 0.62fr) minmax(0, 1.38fr);
     column-gap: 28px;
-    align-items: stretch;
+    align-items: center;
+  }
+  .auth-wash .hp-hero.auth-hero:has(.reset-card) > div:first-child {
+    align-self: center;
+    text-align: center;
   }
 }
 .auth-wash .auth-hero .reset-card {
   width: 100%;
   max-width: none;
   justify-self: stretch;
+  margin-top: 12px;
   border-radius: 16px;
   padding: 2.75rem 2.8rem 2.3rem;
   min-height: 26rem;
