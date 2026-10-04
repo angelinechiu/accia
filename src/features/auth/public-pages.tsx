@@ -222,7 +222,7 @@ export function PublicPage({ page }: { page: string }) {
           </div>
         )}
         <div
-          className={`auth-card${page === "request-access" ? " register-card" : ""}${page === "login" ? " login-card" : ""}`}
+          className={`auth-card${page === "request-access" ? " register-card" : ""}${page === "login" ? " login-card" : ""}${page === "forgot-password" ? " reset-card" : ""}`}
         >
           {!accessPage && page !== "request-access" && (
             <>

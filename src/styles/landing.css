@@ -599,6 +599,32 @@
   }
 }
 
+
+/* Forgot-password card fills the row so the sides are not empty. */
+@media (min-width: 1024px) {
+  .auth-wash .hp-hero.auth-hero:has(.reset-card) {
+    grid-template-columns: minmax(16rem, 0.62fr) minmax(0, 1.38fr);
+    column-gap: 28px;
+    align-items: stretch;
+  }
+}
+.auth-wash .auth-hero .reset-card {
+  width: 100%;
+  max-width: none;
+  justify-self: stretch;
+  border-radius: 16px;
+  padding: 2.75rem 2.8rem 2.3rem;
+  min-height: 26rem;
+}
+.auth-wash .reset-card h2 { margin-bottom: 22px; font-size: 2rem; }
+.auth-wash .reset-card .field input {
+  min-height: 52px;
+  border-radius: 12px;
+  font-size: 16px;
+}
+@media (max-width: 1023px) {
+  .auth-wash .auth-hero .reset-card { width: 100%; border-radius: 16px; min-height: 0; }
+}
 .auth-wash .auth-hero .login-card {
   width: min(100%, 720px);
   justify-self: end;
