@@ -123,7 +123,7 @@
   line-height: 1.02;
 }
 .hp-hero h1 span { display: block; }
-.hp-lead { max-width: 32rem; margin-top: 20px; font-size: 18px; }
+.hp-lead { max-width: 32rem; margin-top: 20px; font-size: 18px; padding-top: 12px; }
 .hp-copy { max-width: 40rem; margin-top: 12px; color: #5e7384; }
 .hp-block h2 {
   max-width: 40rem;

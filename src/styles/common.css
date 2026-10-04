@@ -1398,6 +1398,7 @@ hr {
   display: block;
   text-align: center;
   line-height: 2;
+  padding-top: 12px;
   margin-top: 20px;
   font-size: 12px;
   color: #556885;
