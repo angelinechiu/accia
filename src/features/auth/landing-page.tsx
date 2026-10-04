@@ -193,14 +193,14 @@ export function LandingPage() {
         </Link>
         <nav>
           <Link href="/help">Help</Link>
-          <Link href="/request-access" className="hp-register">Register enterprise</Link>
+          <Link href="/request-access" className="hp-register">Register company</Link>
           <Link href="/login" className="hp-login">Log in</Link>
         </nav>
       </header>
       <main>
         <section className="hp-hero">
           <div>
-            <p className="hp-eyebrow">Enterprise accounting intelligence</p>
+            <p className="hp-eyebrow">Company accounting intelligence</p>
             <p className="hp-quiet">SAIC secure · auditable · built for finance teams</p>
             <h1>From invoice to <span>trusted record.</span></h1>
             <p className="hp-lead">AI-driven invoice processing and automated record standardisation</p>
@@ -209,7 +209,7 @@ export function LandingPage() {
             </p>
             <div className="hp-actions">
               <Link href="/login" className="hp-btn dark">Enter your workspace</Link>
-              <Link href="/request-access" className="hp-btn light">Register enterprise</Link>
+              <Link href="/request-access" className="hp-btn light">Register company</Link>
               <a href="#workspace" className="hp-btn text">Get started</a>
             </div>
           </div>
@@ -350,7 +350,7 @@ export function LandingPage() {
             <p className="hp-eyebrow light">Ready to try the workspace?</p>
             <h2>Clean extraction. Checked records. A standard you can export.</h2>
             <div className="hp-actions">
-              <Link href="/request-access" className="hp-btn light">Register enterprise</Link>
+              <Link href="/request-access" className="hp-btn light">Register company</Link>
               <Link href="/login" className="hp-btn ghost">Sign in</Link>
               <Link href="/help" className="hp-btn text light">Help</Link>
             </div>
@@ -366,7 +366,7 @@ export function LandingPage() {
           <p className="hp-eyebrow">On this page</p>
           <a href="#workspace">What the system does</a>
           <a href="#process">The six steps</a>
-          <Link href="/request-access">Register an enterprise</Link>
+          <Link href="/request-access">Register a company</Link>
           <Link href="/help">Help</Link>
         </div>
         <div>

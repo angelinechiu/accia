@@ -446,7 +446,7 @@ export function AppShell({
                 >
                   <CircleHelp size={15} /> Help & tutorial
                 </button>
-                <Link href="/request-access">Register enterprise</Link>
+                <Link href="/request-access">Register company</Link>
                 <Link href="/login">Switch account</Link>
                 <button
                   onClick={async () => {

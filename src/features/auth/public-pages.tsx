@@ -6,9 +6,7 @@ import {
   ArrowRight,
   Check,
   CheckCircle2,
-  FileCheck,
   LockKeyhole,
-  Scan,
   ShieldCheck,
 } from "lucide-react";
 import { LandingPage } from "@/features/auth/landing-page";
@@ -39,7 +37,7 @@ export function PublicPage({ page }: { page: string }) {
   const titles: Record<string, string> = {
     login: "Welcome back",
     welcome: "Welcome!",
-    "request-access": "Register your enterprise",
+    "request-access": "Register your company",
     activate: "Activate your account",
     "forgot-password": "Forgot your password?",
     "reset-password": "Create a new password",
@@ -69,7 +67,7 @@ export function PublicPage({ page }: { page: string }) {
           notes: String(f.get("notes")),
         });
         setSuccess(
-          "Enterprise access request submitted. Your request is awaiting SAIC approval.",
+          "Company access request submitted. Your request is awaiting SAIC approval.",
         );
       } else if (page === "activate") {
         await activateAccount(
@@ -110,7 +108,7 @@ export function PublicPage({ page }: { page: string }) {
           </Link>
           <nav>
             <Link href="/request-access" className="hp-register">
-              Register enterprise
+              Register company
             </Link>
             <Link href="/login" className="hp-login">
               Log in
@@ -121,7 +119,7 @@ export function PublicPage({ page }: { page: string }) {
           <div className="help-page-copy">
             <p className="hp-eyebrow">Support</p>
             <h1>
-              Tutorial and <span>enterprise helpline.</span>
+              Tutorial and <span>company helpline.</span>
             </h1>
             <p className="hp-lead">
               Learn the workflow, or ask SAIC for help. The same guide opens inside the workspace.
@@ -146,7 +144,7 @@ export function PublicPage({ page }: { page: string }) {
         <nav>
           <Link href="/help">Help</Link>
           <Link href="/request-access" className="hp-register">
-            Register enterprise
+            Register company
           </Link>
           <Link href="/login" className="hp-login">
             Log in
@@ -164,9 +162,9 @@ export function PublicPage({ page }: { page: string }) {
       >
         {page === "request-access" && (
           <section className="register-story">
-            <p className="hp-eyebrow">Enterprise registration</p>
+            <p className="hp-eyebrow">Company registration</p>
             <h1>
-              Register your enterprise and turn invoices into{" "}
+              Register your company and turn invoices into{" "}
               <span>trusted records.</span>
             </h1>
             <p className="hp-lead">
@@ -190,60 +188,11 @@ export function PublicPage({ page }: { page: string }) {
             <p className="register-note">
               No live ledger, tax filing, or payment. This request only opens a company workspace.
             </p>
-            <div className="register-preview">
-              <p className="record-chip">
-                <span className="record-chip-mark" aria-hidden="true">
-                  <Check size={13} strokeWidth={2.6} />
-                </span>
-                From document to decision
-              </p>
-              <article className="record-sheet">
-                <div className="record-row">
-                  <span className="record-mark" aria-hidden="true">
-                    <FileCheck size={20} strokeWidth={2.2} />
-                  </span>
-                  <span className="record-status">
-                    <i />
-                    Validated
-                  </span>
-                </div>
-                <p className="record-kicker">Standardised accounting record</p>
-                <h2>Everything in its right place.</h2>
-                <dl className="record-meta">
-                  <div>
-                    <dt>Supplier</dt>
-                    <dd>Atlas Office Supplies</dd>
-                  </div>
-                  <div>
-                    <dt>Invoice</dt>
-                    <dd>INV-2026-00821</dd>
-                  </div>
-                </dl>
-                <div className="record-lines">
-                  <p>
-                    <span>Office supplies</span>
-                    <strong>RM 800.00</strong>
-                  </p>
-                  <p>
-                    <span>Delivery</span>
-                    <strong>RM 48.00</strong>
-                  </p>
-                  <p className="total">
-                    <span>Total amount</span>
-                    <strong>RM 848.00</strong>
-                  </p>
-                </div>
-                <p className="record-ready">
-                  <Scan size={16} strokeWidth={2.2} aria-hidden="true" />
-                  Extracted. Validated. Ready to export.
-                </p>
-              </article>
-            </div>
           </section>
         )}
         {accessPage && (
           <div>
-            <p className="hp-eyebrow">Enterprise accounting intelligence</p>
+            <p className="hp-eyebrow">Company accounting intelligence</p>
             <p className="hp-quiet">
               {page === "login"
                 ? "SAIC secure · company email opens the workspace"
@@ -282,7 +231,7 @@ export function PublicPage({ page }: { page: string }) {
               </span>
               <p className="hp-eyebrow">
                 {page === "request-access"
-                  ? "Enterprise registration"
+                  ? "Company registration"
                   : page === "reset-password"
                     ? "Account access"
                     : "Workspace sign in"}
@@ -292,7 +241,7 @@ export function PublicPage({ page }: { page: string }) {
                 {page === "welcome"
                   ? "Your identity has been verified successfully."
                   : page === "request-access"
-                    ? "Submit your company details to register for enterprise access. SAIC will review your request."
+                    ? "Submit your company details to register for company access. SAIC will review your request."
                     : page === "reset-password"
                       ? "Choose a strong password to keep your workspace secure."
                       : "Secure access starts with your company email."}
@@ -302,7 +251,7 @@ export function PublicPage({ page }: { page: string }) {
           {page === "request-access" && !success && (
             <>
               <p className="hp-eyebrow">Company details</p>
-              <h2>Register your enterprise</h2>
+              <h2>Register your company</h2>
               <p>Complete the form. SAIC reviews the request before the workspace opens.</p>
             </>
           )}
@@ -513,7 +462,7 @@ export function PublicPage({ page }: { page: string }) {
                   : page === "login"
                     ? "Continue with email"
                     : page === "request-access"
-                      ? "Submit enterprise registration"
+                      ? "Submit company registration"
                       : page === "activate"
                         ? "Activate account"
                         : page === "forgot-password"
@@ -528,7 +477,7 @@ export function PublicPage({ page }: { page: string }) {
                   </Link>
                   <p className="form-bottom">
                     New to Accounting Intelligence?{" "}
-                    <Link href="/request-access">Register enterprise</Link>
+                    <Link href="/request-access">Register company</Link>
                     {" · "}
                     <Link href="/help">Need help?</Link>
                   </p>
@@ -552,7 +501,7 @@ export function PublicPage({ page }: { page: string }) {
             <ShieldCheck size={15} />
             <span>
               {page === "request-access"
-                ? "Enterprise registration is reviewed by SAIC before workspace activation."
+                ? "Company registration is reviewed by SAIC before workspace activation."
                 : "Your account access is protected by your company credentials."}
             </span>
           </div>

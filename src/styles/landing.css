@@ -360,7 +360,7 @@
   .record-deck .record-sheet { transition: none; }
 }
 
-/* Login, forgot-password, and enterprise registration share the landing wash. */
+/* Login, forgot-password, and company registration share the landing wash. */
 .auth-wash .auth-stage {
   display: flex;
   justify-content: center;
@@ -577,17 +577,6 @@
   margin-top: 16px;
   color: #5e7384;
 }
-
-.register-preview {
-  max-width: 28rem;
-  margin-top: 28px;
-}
-
-.register-preview .record-chip { margin-bottom: -0.7rem; }
-
-.register-preview .record-sheet h2 { font-size: 1.45rem; }
-
-.register-preview .record-ready { max-width: none; }
 
 .auth-wash .register-card {
   width: 100%;

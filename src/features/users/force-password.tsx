@@ -62,7 +62,7 @@ export function ForcePasswordChange({ user }: { user: User }) {
       </header>
       <main className="hp-hero auth-hero">
         <div>
-          <p className="hp-eyebrow">Enterprise accounting intelligence</p>
+          <p className="hp-eyebrow">Company accounting intelligence</p>
           <p className="hp-quiet">First sign-in · asked once</p>
           <h1>
             Choose a new <span>password.</span>
