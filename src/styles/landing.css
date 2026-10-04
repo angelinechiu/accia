@@ -609,7 +609,7 @@
   }
   .auth-wash .hp-hero.auth-hero:has(.reset-card) > div:first-child {
     align-self: center;
-    text-align: center;
+    text-align: left;
   }
 }
 .auth-wash .auth-hero .reset-card {
