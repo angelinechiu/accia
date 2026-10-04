@@ -622,6 +622,33 @@
   min-height: 26rem;
 }
 .auth-wash .reset-card h2 { margin-bottom: 22px; font-size: 2rem; }
+.auth-wash .otp-wait { display: grid; }
+.auth-wash .otp-wait > p:not(.hp-eyebrow):not(.otp-timer):not(.form-bottom) { margin-bottom: 18px; }
+.auth-wash .otp-timer {
+  margin: 0 0 14px;
+  color: #2a3a4a;
+  font-size: 13px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.auth-wash .otp-resend {
+  justify-self: start;
+  margin-top: 12px;
+  border: 0;
+  background: transparent;
+  color: #2a3a4a;
+  font-size: 14px;
+  font-weight: 650;
+}
+.auth-wash .otp-resend:disabled { color: #8aa0b3; cursor: not-allowed; }
+.auth-wash .otp-wait .form-bottom button.form-link {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  font: inherit;
+  font-weight: 650;
+}
+
 .auth-wash .reset-card .field input {
   min-height: 52px;
   border-radius: 12px;

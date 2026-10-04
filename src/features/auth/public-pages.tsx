@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import {
   ArrowRight,
   Check,
@@ -34,6 +34,12 @@ export function PublicPage({ page }: { page: string }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [activation, setActivation] = useState(params.get("user") ?? "");
+  const [otpStep, setOtpStep] = useState(false);
+  const [otp, setOtp] = useState("");
+  const [resetEmail, setResetEmail] = useState("");
+  const [secondsLeft, setSecondsLeft] = useState(0);
+  const [otpRejected, setOtpRejected] = useState(false);
+  const previewOtp = "123456";
   const titles: Record<string, string> = {
     login: "Welcome back",
     welcome: "Welcome!",
@@ -44,6 +50,32 @@ export function PublicPage({ page }: { page: string }) {
     help: "Help & support",
   };
   const selected = accounts?.find((a) => a.id === activation);
+  useEffect(() => {
+    if (!otpStep) return;
+    const timer = window.setInterval(() => {
+      setSecondsLeft((current) => (current > 0 ? current - 1 : 0));
+    }, 1000);
+    return () => window.clearInterval(timer);
+  }, [otpStep]);
+
+  function resendOtp() {
+    setOtp("");
+    setError("");
+    setOtpRejected(false);
+    setSecondsLeft(60);
+  }
+
+  function continueReset(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setError("");
+    if (otp.trim() !== previewOtp) {
+      setOtpRejected(true);
+      setError("That code is not valid. Check the company email, or resend the code.");
+      return;
+    }
+    router.push("/reset-password");
+  }
+
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setBusy(true);
@@ -79,10 +111,13 @@ export function PublicPage({ page }: { page: string }) {
           "Account activated successfully. You can now sign in using your company email.",
         );
       } else if (page === "forgot-password") {
-        await requestPasswordReset(String(f.get("email")));
-        setSuccess(
-          "Reset request recorded. Continue below to set a new password.",
-        );
+        const entered = String(f.get("email"));
+        await requestPasswordReset(entered);
+        setResetEmail(entered);
+        setOtp("");
+        setOtpRejected(false);
+        setSecondsLeft(60);
+        setOtpStep(true);
       } else {
         await resetPassword(
           password,
@@ -196,12 +231,18 @@ export function PublicPage({ page }: { page: string }) {
             <p className="hp-quiet">
               {page === "login"
                 ? "SAIC secure · company email opens the workspace"
-                : "Reset stays inside this workspace"}
+                : otpStep
+                  ? "Waiting for the code from the company email"
+                  : "Reset stays inside this workspace"}
             </p>
             <h1>
               {page === "login" ? (
                 <>
                   Sign in to the <span>workspace.</span>
+                </>
+              ) : otpStep ? (
+                <>
+                  Enter the <span>code.</span>
                 </>
               ) : (
                 <>
@@ -212,12 +253,16 @@ export function PublicPage({ page }: { page: string }) {
             <p className="hp-lead">
               {page === "login"
                 ? "From invoice to trusted record."
-                : "Use the company email on the account."}
+                : otpStep
+                  ? "The code is valid for 15 minutes."
+                  : "Use the company email on the account."}
             </p>
             <p className="hp-copy">
               {page === "login"
                 ? "Enter the company email you were issued. That address opens the right workspace. People are invited; there is no public self-signup."
-                : "Enter the company email. This preview records the reset here, then you choose a new password on the next screen. A real email is not sent."}
+                : otpStep
+                  ? "Enter the code from the company email, then continue to choose a new password. Sending the email is handled later."
+                  : "Enter the company email. This preview records the reset here, then asks for the code before the new password."}
             </p>
           </div>
         )}
@@ -255,7 +300,7 @@ export function PublicPage({ page }: { page: string }) {
               <p>Complete the form. SAIC reviews the request before the workspace opens.</p>
             </>
           )}
-          {accessPage && !success && (
+          {accessPage && !success && !otpStep && (
             <>
               <span className="auth-icon">
                 <LockKeyhole size={20} />
@@ -265,6 +310,48 @@ export function PublicPage({ page }: { page: string }) {
               </p>
               <h2>{page === "login" ? "Company credentials" : "Request a reset"}</h2>
             </>
+          )}
+          {page === "forgot-password" && otpStep && (
+            <form className="otp-wait" onSubmit={continueReset}>
+              <span className="auth-icon">
+                <LockKeyhole size={20} />
+              </span>
+              <p className="hp-eyebrow">Account access</p>
+              <h2>Enter the code</h2>
+              <p>Waiting for the code sent to {resetEmail || "the company email"}. It stays valid for 15 minutes.</p>
+              {error && <ErrorState message={error} />}
+              <Field label="Code *">
+                <input
+                  inputMode="numeric"
+                  autoComplete="one-time-code"
+                  maxLength={6}
+                  placeholder="6-digit code"
+                  required
+                  value={otp}
+                  onChange={(event) => setOtp(event.target.value)}
+                />
+              </Field>
+              <p className="otp-timer" aria-live="polite">
+                {secondsLeft > 0 ? `Resend in ${secondsLeft}s` : "You can resend the code."}
+              </p>
+              <button className="btn primary full" type="submit">
+                Continue reset password <ArrowRight size={16} />
+              </button>
+              <button
+                className="otp-resend"
+                type="button"
+                disabled={secondsLeft > 0 && !otpRejected}
+                onClick={resendOtp}
+              >
+                Resend code
+              </button>
+              <p className="form-bottom">
+                Wrong email?{" "}
+                <button type="button" className="form-link" onClick={() => { setOtpStep(false); setError(""); }}>
+                  Change company email
+                </button>
+              </p>
+            </form>
           )}
           {page === "welcome" ? (
             <div className="success-state">
@@ -301,7 +388,7 @@ export function PublicPage({ page }: { page: string }) {
                 <ArrowRight size={16} />
               </Link>
             </div>
-          ) : (
+          ) : otpStep ? null : (
             <form onSubmit={submit}>
               {error && <ErrorState message={error} />}
               {page === "login" && (
