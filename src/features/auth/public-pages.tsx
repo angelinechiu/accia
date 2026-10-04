@@ -176,7 +176,7 @@ export function PublicPage({ page }: { page: string }) {
             <ul className="register-points">
               <li>
                 <Check size={16} strokeWidth={2.6} aria-hidden="true" />
-                <span>Extract supplier, date, tax, and total from invoices, bills, and receipts.</span>
+                <span>Extract supplier, date, line items, and total from invoices, bills, and receipts.</span>
               </li>
               <li>
                 <Check size={16} strokeWidth={2.6} aria-hidden="true" />
@@ -225,7 +225,7 @@ export function PublicPage({ page }: { page: string }) {
                     <strong>RM 800.00</strong>
                   </p>
                   <p>
-                    <span>Tax · 6%</span>
+                    <span>Delivery</span>
                     <strong>RM 48.00</strong>
                   </p>
                   <p className="total">
