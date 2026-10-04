@@ -590,7 +590,7 @@
 
 .auth-wash .register-card > p:not(.hp-eyebrow) { margin-bottom: 18px; }
 
-/* Login form sits nearer the middle and is larger. */
+/* Login form sits toward the right of the hero and is larger. */
 @media (min-width: 1024px) {
   .auth-wash .hp-hero.auth-hero:has(.login-card) {
     grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.28fr);
@@ -601,7 +601,8 @@
 
 .auth-wash .auth-hero .login-card {
   width: min(100%, 720px);
-  justify-self: start;
+  justify-self: end;
+  margin-right: 0.25rem;
   padding: 2.5rem 2.4rem 1.9rem;
 }
 
