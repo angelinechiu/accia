@@ -281,7 +281,6 @@ export function LandingPage() {
         <section className="hp-block" aria-labelledby="modules-title">
           <p className="hp-eyebrow">Modules</p>
           <h2 id="modules-title">A general look across the workspace.</h2>
-          <p className="hp-copy">The open card stays in the centre and moves every 4 seconds.</p>
           <div
             className="stack"
             onPointerDown={(event) => { dragX.current = event.clientX; }}
