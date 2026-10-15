@@ -33,6 +33,7 @@ import {
 } from "@/components/common/ui";
 import { DocumentViewer } from "@/components/common/documents/document-viewer";
 import { RecordDetail } from "@/features/common/records/records";
+
 function ExtractionField({
   field,
   onSave,
@@ -88,7 +89,7 @@ function ExtractionField({
       </div>
       {field.correctedBy && (
         <div className="correction-note">
-          AI original: {field.original || "(empty)"} → Corrected: {field.value}
+          Original: {field.original || "(empty)"} → Corrected: {field.value}
           <br />
           Reviewed by {field.correctedBy}
         </div>
@@ -96,6 +97,7 @@ function ExtractionField({
     </div>
   );
 }
+
 export function DocumentReview({
   user,
   documentId,
@@ -122,6 +124,7 @@ export function DocumentReview({
   const [failure, setFailure] = useState("");
   const [toast, setToast] = useState("");
   const [busy, setBusy] = useState(false);
+
   async function run(op: () => Promise<unknown>, message: string) {
     setBusy(true);
     setFailure("");
@@ -135,37 +138,42 @@ export function DocumentReview({
       setBusy(false);
     }
   }
+
   if (loading) return <LoadingState />;
   if (error || !data) return <ErrorState message={error} retry={refresh} />;
+
   const readonly = data.doc.status === "COMPLETED";
   const record = data.records.find((r) => r.documentId === documentId);
   const failed = data.doc.status === "FAILED";
   const pending = ["UPLOADED", "QUEUED", "PROCESSING"].includes(
     data.doc.status,
   );
+
   const steps = [
-    "Uploaded",
-    "Queued",
-    "Processing",
-    "Extracted",
-    "Validation",
-    "Standardised",
+    { key: "Upload", label: "Upload" },
+    { key: "Extract", label: "Extract" },
+    { key: "Validate", label: "Validate" },
+    { key: "Standardise", label: "Standardise" },
   ];
-  const current = readonly
-    ? 6
+
+  const currentIndex = readonly
+    ? 4
     : data.doc.status === "VALIDATED"
-      ? 5
+      ? 2
       : failed
-        ? 2
+        ? 1
         : pending
-          ? ["UPLOADED", "QUEUED", "PROCESSING"].indexOf(data.doc.status)
-          : 4;
+          ? 0
+          : data.doc.status === "EXTRACTED" || data.doc.status === "CORRECTED" || data.doc.status === "IN_REVIEW" || data.doc.status === "EXCEPTION"
+            ? 1
+            : 2;
+
   return (
     <>
       <PageHeader
-        eyebrow="DOCUMENT WORKSPACE / DOCUMENT REVIEW"
+        eyebrow="DOCUMENT PROCESSING"
         title={data.doc.name}
-        description={`${data.doc.id} · Uploaded ${formatDate(data.doc.createdAt)} · ${data.doc.seconds} sec processing`}
+        description={`${data.doc.id} · Uploaded ${formatDate(data.doc.createdAt)}`}
         actions={
           <>
             <Badge>{data.doc.status}</Badge>
@@ -175,28 +183,31 @@ export function DocumentReview({
           </>
         }
       />
+
       <div className="timeline">
         {steps.map((s, i) => (
           <div
-            className={i < current ? "done" : i === current ? "current" : ""}
-            key={s}
+            className={i < currentIndex ? "done" : i === currentIndex ? "current" : ""}
+            key={s.key}
           >
-            <span>{i < current ? <Check size={14} /> : i + 1}</span>
-            <strong>{s}</strong>
+            <span>{i < currentIndex ? <Check size={14} /> : i + 1}</span>
+            <strong>{s.label}</strong>
             <small>
-              {i < current ? "Complete" : i === current ? "Current" : "Pending"}
+              {i < currentIndex ? "Complete" : i === currentIndex ? "Current" : "Pending"}
             </small>
           </div>
         ))}
       </div>
+
       {failure && <ErrorState message={failure} />}
+
       {failed || pending ? (
         <Panel title={failed ? "Processing failed" : "Processing in progress"}>
           <div className="panel-body">
             <p>
               {failed
-                ? "The document scan could not be processed. Retry with the sample extraction."
-                : "Resume processing if you left the upload flow."}
+                ? "The document could not be processed. You can retry extraction."
+                : "Document is being processed. You can continue once extraction is ready."}
             </p>
             <button
               className="btn primary"
@@ -204,12 +215,12 @@ export function DocumentReview({
               onClick={() =>
                 run(
                   () => advanceProcessing(user, documentId, "EXTRACTED"),
-                  "Sample extraction completed.",
+                  "Extraction completed.",
                 )
               }
             >
               <RefreshCw size={16} />{" "}
-              {failed ? "Retry processing" : "Complete processing"}
+              {failed ? "Retry extraction" : "Complete extraction"}
             </button>
           </div>
         </Panel>
@@ -242,6 +253,7 @@ export function DocumentReview({
               </button>
             ))}
           </div>
+
           {tab === "Document" && (
             <div className="preview-alone">
               <DocumentViewer
@@ -250,6 +262,7 @@ export function DocumentReview({
               />
             </div>
           )}
+
           {(tab === "Extracted Data" || tab === "Exceptions") && (
             <div className="review-grid">
               <DocumentViewer
@@ -258,9 +271,8 @@ export function DocumentReview({
               />
               <div>
                 <Panel
-                  title="AI extracted data"
-                  subtitle="Compare with the source and save each reviewed field."
-                  action={<span className="subtle-tag">Sample extraction</span>}
+                  title="Extracted data"
+                  subtitle="Review fields extracted from the document and confirm or correct them."
                 >
                   <div className="panel-body">
                     {tab === "Exceptions" && (
@@ -299,8 +311,7 @@ export function DocumentReview({
                       )}
                     </div>
                     <p className="field-help">
-                      Use the save icon to confirm low-confidence values, even
-                      when the value is correct.
+                      Save each field to confirm it, especially low-confidence values.
                     </p>
                   </div>
                 </Panel>
@@ -347,10 +358,11 @@ export function DocumentReview({
               </div>
             </div>
           )}
+
           {tab === "Validation" && (
             <Panel
-              title="Validation summary"
-              subtitle="Company-specific rules applied to the current extracted values"
+              title="Validation"
+              subtitle="Rules applied to the extracted values"
             >
               <div className="validation-summary">
                 {(["PASS", "WARNING", "FAIL"] as const).map((s) => (
@@ -399,20 +411,20 @@ export function DocumentReview({
                   <FileCheck2 size={16} /> Create standardised record
                 </button>
                 <span className="muted">
-                  Resolve failures and review low-confidence fields first.
+                  Resolve any failures and review low-confidence fields first.
                 </span>
               </div>
             </Panel>
           )}
+
           {tab === "Standardised Record" &&
             (record ? (
               <RecordDetail record={record} />
             ) : (
-              <Panel title="Ready for a consistent record">
+              <Panel title="Ready for standardisation">
                 <div className="panel-body">
                   <p>
-                    Complete validation and resolve all exceptions to
-                    standardise this invoice.
+                    Complete validation and resolve all exceptions to create the standardised accounting record.
                   </p>
                   <button
                     className="btn primary"
@@ -429,6 +441,7 @@ export function DocumentReview({
                 </div>
               </Panel>
             ))}
+
           {tab === "Activity" && (
             <Panel title="Document activity">
               <DataTable
