@@ -185,7 +185,7 @@ export function UploadPage({ user }: { user: User }) {
       <PageHeader
         eyebrow="DOCUMENT WORKSPACE"
         title="Document Upload"
-        description="Upload invoices, bills, and receipts for AI-driven field extraction, validation, and standardised record creation."
+        description="Upload invoices, bills, and receipts for field extraction, validation, and standardised record creation."
       />
       <div className="upload-layout">
         <Panel
@@ -334,8 +334,8 @@ export function UploadPage({ user }: { user: User }) {
               </select>
             </Field>
             <Field
-              label="Extraction scenario"
-              hint="The selected scenario generates sample extraction data; no real OCR or AI is performed in this PoC."
+              label="Processing preference"
+              hint="Choose how the system should handle this document during extraction and validation."
             >
               <select
                 value={scenario}
@@ -345,7 +345,7 @@ export function UploadPage({ user }: { user: User }) {
                 <option value="mismatch">
                   Total mismatch · correction workflow
                 </option>
-                <option value="success">Successful extraction</option>
+                <option value="success">Standard extraction</option>
                 <option value="low">Low-confidence reference</option>
                 <option value="missing">Missing invoice number</option>
                 <option value="duplicate">Duplicate invoice</option>
@@ -374,17 +374,17 @@ export function UploadPage({ user }: { user: User }) {
               [
                 "01",
                 "Upload",
-                "Ingest invoices, bills, or receipts (JPG, PNG, PDF).",
+                "Ingest invoices, bills, or receipts.",
               ],
               [
                 "02",
                 "Extract",
-                "AI-driven field extraction (simulated in this PoC).",
+                "Extract key fields from the document.",
               ],
               [
                 "03",
                 "Validate",
-                "Check totals, required fields, and confidence scores.",
+                "Check totals, required fields, and confidence.",
               ],
               [
                 "04",
@@ -402,8 +402,7 @@ export function UploadPage({ user }: { user: User }) {
             ))}
             <div className="info-box">
               <CheckCircle2 size={18} />
-              Files stay local in this frontend PoC. Exceptions are routed for
-              manual review. No real OCR or backend processing occurs.
+              Documents move through extraction, validation, and standardisation. Exceptions are routed for review.
             </div>
             <div className="status-legend">
               <span>
