@@ -11,7 +11,6 @@ import {
   Building2,
   ChartNoAxesCombined,
   ChevronDown,
-  ChevronRight,
   CircleHelp,
   ClipboardCheck,
   FileCheck2,
@@ -28,9 +27,6 @@ import {
   Users,
   UserRound,
   X,
-  CheckCircle2,
-  FileSearch,
-  FileOutput,
 } from "lucide-react";
 import type { User } from "@/types";
 import { logout } from "@/lib/api/auth.service";
@@ -59,68 +55,41 @@ export function Brand() {
   );
 }
 
-type NavItem = {
-  label: string;
-  path: string;
-  icon: typeof LayoutDashboard;
-  children?: { label: string; path: string; icon: typeof LayoutDashboard }[];
-};
+const adminNav = [
+  ["Dashboard", "dashboard", LayoutDashboard],
+  ["Pending Approvals", "approvals", ClipboardCheck],
+  ["Tenants", "tenants", Building2],
+  ["Users", "users", Users],
+  ["AI Processing", "processing", ScanLine],
+  ["Performance", "performance", ChartNoAxesCombined],
+  ["Standardised Records", "records", FileCheck2],
+  ["Audit Logs", "audit", Activity],
+  ["System Settings", "settings", Settings2],
+  ["My Profile", "profile", UserRound],
+] as const;
 
-const adminNav: NavItem[] = [
-  { label: "Dashboard", path: "dashboard", icon: LayoutDashboard },
-  { label: "Pending Approvals", path: "approvals", icon: ClipboardCheck },
-  { label: "Tenants", path: "tenants", icon: Building2 },
-  { label: "Users", path: "users", icon: Users },
-  { label: "AI Processing", path: "processing", icon: ScanLine },
-  { label: "Performance", path: "performance", icon: ChartNoAxesCombined },
-  { label: "Standardised Records", path: "records", icon: FileCheck2 },
-  { label: "Audit Logs", path: "audit", icon: Activity },
-  { label: "System Settings", path: "settings", icon: Settings2 },
-  { label: "My Profile", path: "profile", icon: UserRound },
-];
+const companyNav = [
+  ["Dashboard", "dashboard", LayoutDashboard],
+  ["Documents", "documents", Files],
+  ["Upload", "upload", Upload],
+  ["Exceptions", "exceptions", ShieldCheck],
+  ["Standardised Records", "records", FileCheck2],
+  ["Users", "users", Users],
+  ["Validation Rules", "validation-rules", ClipboardCheck],
+  ["Reports", "reports", ChartNoAxesCombined],
+  ["Audit Logs", "audit", Activity],
+  ["Company Settings", "settings", Settings2],
+  ["My Profile", "profile", UserRound],
+] as const;
 
-const companyNav: NavItem[] = [
-  { label: "Dashboard", path: "dashboard", icon: LayoutDashboard },
-  {
-    label: "Document Processing",
-    path: "documents",
-    icon: Files,
-    children: [
-      { label: "Upload", path: "upload", icon: Upload },
-      { label: "All Documents", path: "documents", icon: Files },
-      { label: "Extraction", path: "documents", icon: FileSearch },
-      { label: "Validation", path: "documents", icon: CheckCircle2 },
-      { label: "Standardise", path: "documents", icon: FileOutput },
-    ],
-  },
-  { label: "Exceptions", path: "exceptions", icon: ShieldCheck },
-  { label: "Standardised Records", path: "records", icon: FileCheck2 },
-  { label: "Users", path: "users", icon: Users },
-  { label: "Validation Rules", path: "validation-rules", icon: ClipboardCheck },
-  { label: "Reports", path: "reports", icon: ChartNoAxesCombined },
-  { label: "Audit Logs", path: "audit", icon: Activity },
-  { label: "Company Settings", path: "settings", icon: Settings2 },
-  { label: "My Profile", path: "profile", icon: UserRound },
-];
-
-const workspaceNav: NavItem[] = [
-  { label: "Dashboard", path: "dashboard", icon: LayoutDashboard },
-  {
-    label: "Document Processing",
-    path: "documents",
-    icon: Files,
-    children: [
-      { label: "Upload", path: "upload", icon: Upload },
-      { label: "My Documents", path: "documents", icon: Files },
-      { label: "Extraction", path: "documents", icon: FileSearch },
-      { label: "Validation", path: "documents", icon: CheckCircle2 },
-      { label: "Standardise", path: "documents", icon: FileOutput },
-    ],
-  },
-  { label: "Exceptions", path: "exceptions", icon: ShieldCheck },
-  { label: "Standardised Records", path: "records", icon: FileCheck2 },
-  { label: "Profile", path: "profile", icon: UserRound },
-];
+const workspaceNav = [
+  ["Dashboard", "dashboard", LayoutDashboard],
+  ["Upload Document", "upload", Upload],
+  ["My Documents", "documents", Files],
+  ["Exceptions", "exceptions", ShieldCheck],
+  ["Standardised Records", "records", FileCheck2],
+  ["Profile", "profile", UserRound],
+] as const;
 
 export function AppShell({
   user,
@@ -138,9 +107,6 @@ export function AppShell({
   const [notifications, setNotifications] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
   const [showBackToTop, setShowBackToTop] = useState(false);
-  const [expanded, setExpanded] = useState<Record<string, boolean>>({
-    "Document Processing": true,
-  });
   const sidebarRef = useRef<HTMLElement>(null);
   const rail = !pinned && !peek;
 
@@ -295,71 +261,22 @@ export function AppShell({
         </div>
         <div className="nav-label">WORKSPACE</div>
         <nav>
-          {nav.map((item) => {
-            const Icon = item.icon;
-            const isGroup = !!item.children?.length;
-            const groupOpen = expanded[item.label] ?? false;
-            const isActive = currentPage === item.path;
-            return (
-              <div key={item.label} className="nav-group">
-                {isGroup ? (
-                  <button
-                    type="button"
-                    className={`nav-item nav-group-toggle ${groupOpen ? "open" : ""}`}
-                    onClick={() =>
-                      setExpanded((prev) => ({
-                        ...prev,
-                        [item.label]: !groupOpen,
-                      }))
-                    }
-                  >
-                    <Icon size={18} />
-                    <span>{item.label}</span>
-                    {groupOpen ? (
-                      <ChevronDown size={14} />
-                    ) : (
-                      <ChevronRight size={14} />
-                    )}
-                  </button>
-                ) : (
-                  <Link
-                    href={`/${prefix}/${item.path}`}
-                    aria-current={isActive ? "page" : undefined}
-                    onClick={() => setOpen(false)}
-                    className={`nav-item ${isActive ? "active" : ""}`}
-                    title={item.label}
-                  >
-                    <Icon size={18} />
-                    <span>{item.label}</span>
-                    {item.path === "approvals" && !!data.data?.pending && (
-                      <span className="nav-count">{data.data.pending}</span>
-                    )}
-                  </Link>
-                )}
-                {isGroup && groupOpen && (
-                  <div className="nav-sub">
-                    {item.children!.map((child) => {
-                      const ChildIcon = child.icon;
-                      const childActive = currentPage === child.path;
-                      return (
-                        <Link
-                          key={child.label}
-                          href={`/${prefix}/${child.path}`}
-                          aria-current={childActive ? "page" : undefined}
-                          onClick={() => setOpen(false)}
-                          className={`nav-item nav-sub-item ${childActive ? "active" : ""}`}
-                          title={child.label}
-                        >
-                          <ChildIcon size={16} />
-                          <span>{child.label}</span>
-                        </Link>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-            );
-          })}
+          {nav.map(([label, path, Icon], i) => (
+            <Link
+              key={path}
+              href={`/${prefix}/${path}`}
+              aria-current={currentPage === path ? "page" : undefined}
+              onClick={() => setOpen(false)}
+              className={`nav-item ${currentPage === path ? "active" : ""} ${i === nav.length - 2 ? "nav-separator" : ""}`}
+              title={label}
+            >
+              <Icon size={18} />
+              <span>{label}</span>
+              {path === "approvals" && !!data.data?.pending && (
+                <span className="nav-count">{data.data.pending}</span>
+              )}
+            </Link>
+          ))}
         </nav>
         <div className="sidebar-bottom">
           <div className="system-health">
@@ -418,11 +335,7 @@ export function AppShell({
             </Link>
             <span className="crumb-divider">/</span>
             <strong>
-              {nav.find((n) => n.path === currentPage)?.label ??
-                nav
-                  .flatMap((n) => n.children ?? [])
-                  .find((c) => c.path === currentPage)?.label ??
-                "Overview"}
+              {nav.find((n) => n[1] === currentPage)?.[0] ?? "Overview"}
             </strong>
           </div>
           <div className="topbar-right">
