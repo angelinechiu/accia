@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useState } from "react";
-import { Check, CheckCircle2, FileCheck2, RefreshCw, Save } from "lucide-react";
+import { Check, CheckCircle2, FileCheck2, RefreshCw } from "lucide-react";
 import type { ExtractedField, User } from "@/types";
 import { useResource } from "@/features/common/hooks/use-resource";
 import {
@@ -34,7 +34,7 @@ import {
 import { DocumentViewer } from "@/components/common/documents/document-viewer";
 import { RecordDetail } from "@/features/common/records/records";
 
-function ExtractionField({
+function FormField({
   field,
   onSave,
   readonly,
@@ -46,48 +46,30 @@ function ExtractionField({
   const [value, setValue] = useState(field.value);
   const [saving, setSaving] = useState(false);
   return (
-    <div className="extraction-field">
-      <div className="extraction-label">
-        <span>{field.label}</span>
-        <span
-          className={`confidence ${field.confidence >= 95 ? "high" : field.confidence >= 80 ? "medium" : "low"}`}
-        >
-          {field.correctedBy ? (
-            <>
-              <Check size={12} /> Reviewed
-            </>
-          ) : (
-            `${field.confidence}%`
-          )}
-        </span>
-      </div>
-      <div className="inline-input">
-        <input
-          aria-label={field.label}
-          value={value}
-          disabled={readonly || saving}
-          onChange={(e) => setValue(e.target.value)}
-        />
-        {!readonly && (
-          <button
-            aria-label={`Save ${field.label}`}
-            title={`Save ${field.label}`}
-            className="icon-btn"
-            disabled={saving}
-            onClick={async () => {
-              setSaving(true);
-              try {
-                await onSave(value);
-              } finally {
-                setSaving(false);
-              }
-            }}
-          >
-            <Save size={16} />
-          </button>
-        )}
-      </div>
-    </div>
+    <label className="shoebox-field">
+      <span className="shoebox-label">
+        {field.label}
+        <em className={`conf ${field.confidence >= 95 ? "high" : field.confidence >= 80 ? "med" : "low"}`}>
+          {field.correctedBy ? <Check size={11} /> : null}
+          {field.correctedBy ? "Reviewed" : `${field.confidence}%`}
+        </em>
+      </span>
+      <input
+        value={value}
+        disabled={readonly || saving}
+        onChange={(e) => setValue(e.target.value)}
+        onBlur={async () => {
+          if (value !== field.value && !readonly) {
+            setSaving(true);
+            try {
+              await onSave(value);
+            } finally {
+              setSaving(false);
+            }
+          }
+        }}
+      />
+    </label>
   );
 }
 
@@ -184,46 +166,22 @@ export function DocumentReview({
       ) : (
         <>
           <div className="review-toolbar">
-            <button
-              className={panel === "review" ? "active" : ""}
-              onClick={() => setPanel("review")}
-            >
-              Review
-            </button>
-            <button
-              className={panel === "validation" ? "active" : ""}
-              onClick={() => setPanel("validation")}
-            >
-              Validation
-            </button>
-            <button
-              className={panel === "record" ? "active" : ""}
-              onClick={() => setPanel("record")}
-            >
-              Standardised Record
-            </button>
-            <button
-              className={panel === "activity" ? "active" : ""}
-              onClick={() => setPanel("activity")}
-            >
-              Activity
-            </button>
+            <button className={panel === "review" ? "active" : ""} onClick={() => setPanel("review")}>Review</button>
+            <button className={panel === "validation" ? "active" : ""} onClick={() => setPanel("validation")}>Validation</button>
+            <button className={panel === "record" ? "active" : ""} onClick={() => setPanel("record")}>Standardised Record</button>
+            <button className={panel === "activity" ? "active" : ""} onClick={() => setPanel("activity")}>Activity</button>
           </div>
 
           {panel === "review" && (
-            <div className="split-review">
-              <div className="split-left">
-                <div className="split-header">Original document</div>
-                <DocumentViewer
-                  name={data.doc.name}
-                  extraction={data.extraction}
-                />
+            <div className="shoebox-split">
+              <div className="shoebox-doc">
+                <DocumentViewer name={data.doc.name} extraction={data.extraction} />
               </div>
-              <div className="split-right">
-                <div className="split-header">Extracted fields</div>
-                <div className="extraction-panel">
+              <div className="shoebox-form">
+                <div className="shoebox-form-head">Extracted fields</div>
+                <div className="shoebox-fields">
                   {Object.entries(data.extraction.fields).map(([key, field]) => (
-                    <ExtractionField
+                    <FormField
                       key={`${key}:${field.value}:${field.correctedBy}`}
                       field={field}
                       readonly={readonly}
@@ -235,45 +193,45 @@ export function DocumentReview({
                       }
                     />
                   ))}
-                  {data.extraction.lineItems.length > 0 && (
-                    <div className="line-items-block">
-                      <strong>Line items</strong>
-                      <DataTable
-                        rows={data.extraction.lineItems}
-                        rowKey={(r) => r.description}
-                        columns={[
-                          { label: "Description", render: (r) => r.description },
-                          { label: "Qty", render: (r) => r.quantity },
-                          { label: "Unit", render: (r) => money(r.unitPrice) },
-                          { label: "Amount", render: (r) => money(r.amount) },
-                        ]}
-                      />
-                    </div>
-                  )}
-                  {!readonly && (
-                    <div className="review-actions">
-                      <Field label="Note">
-                        <textarea
-                          value={note}
-                          onChange={(e) => setNote(e.target.value)}
-                          placeholder="Optional note for this review…"
-                        />
-                      </Field>
-                      <button
-                        className="btn primary"
-                        disabled={busy}
-                        onClick={() =>
-                          run(
-                            () => resolveException(user, documentId, note || "Reviewed"),
-                            "Review saved and revalidated.",
-                          )
-                        }
-                      >
-                        <CheckCircle2 size={16} /> Save & revalidate
-                      </button>
-                    </div>
-                  )}
                 </div>
+                {data.extraction.lineItems.length > 0 && (
+                  <div className="shoebox-lines">
+                    <strong>Line items</strong>
+                    <DataTable
+                      rows={data.extraction.lineItems}
+                      rowKey={(r) => r.description}
+                      columns={[
+                        { label: "Description", render: (r) => r.description },
+                        { label: "Qty", render: (r) => r.quantity },
+                        { label: "Unit", render: (r) => money(r.unitPrice) },
+                        { label: "Amount", render: (r) => money(r.amount) },
+                      ]}
+                    />
+                  </div>
+                )}
+                {!readonly && (
+                  <div className="shoebox-actions">
+                    <Field label="Note">
+                      <textarea
+                        value={note}
+                        onChange={(e) => setNote(e.target.value)}
+                        placeholder="Optional note…"
+                      />
+                    </Field>
+                    <button
+                      className="btn primary full"
+                      disabled={busy}
+                      onClick={() =>
+                        run(
+                          () => resolveException(user, documentId, note || "Reviewed"),
+                          "Review saved and revalidated.",
+                        )
+                      }
+                    >
+                      <CheckCircle2 size={16} /> Save & revalidate
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -283,9 +241,7 @@ export function DocumentReview({
               <div className="validation-summary">
                 {(["PASS", "WARNING", "FAIL"] as const).map((s) => (
                   <div key={s}>
-                    <strong>
-                      {data.validation.filter((v) => v.result === s).length}
-                    </strong>
+                    <strong>{data.validation.filter((v) => v.result === s).length}</strong>
                     <Badge>{s}</Badge>
                   </div>
                 ))}
@@ -304,12 +260,7 @@ export function DocumentReview({
                   <button
                     disabled={busy}
                     className="btn"
-                    onClick={() =>
-                      run(
-                        () => revalidateDocument(user, documentId),
-                        "Document revalidated.",
-                      )
-                    }
+                    onClick={() => run(() => revalidateDocument(user, documentId), "Document revalidated.")}
                   >
                     <RefreshCw size={15} /> Revalidate
                   </button>
@@ -317,12 +268,7 @@ export function DocumentReview({
                 <button
                   disabled={busy || data.doc.status !== "VALIDATED"}
                   className="btn primary"
-                  onClick={() =>
-                    run(
-                      () => standardiseDocument(user, documentId),
-                      "Standardised accounting record created.",
-                    )
-                  }
+                  onClick={() => run(() => standardiseDocument(user, documentId), "Standardised accounting record created.")}
                 >
                   <FileCheck2 size={16} /> Create standardised record
                 </button>
@@ -336,18 +282,11 @@ export function DocumentReview({
             ) : (
               <Panel title="Ready for standardisation">
                 <div className="panel-body">
-                  <p>
-                    Complete validation and resolve exceptions to create the standardised accounting record.
-                  </p>
+                  <p>Complete validation and resolve exceptions to create the standardised accounting record.</p>
                   <button
                     className="btn primary"
                     disabled={busy || data.doc.status !== "VALIDATED"}
-                    onClick={() =>
-                      run(
-                        () => standardiseDocument(user, documentId),
-                        "Standardised accounting record created.",
-                      )
-                    }
+                    onClick={() => run(() => standardiseDocument(user, documentId), "Standardised accounting record created.")}
                   >
                     <FileCheck2 size={16} /> Create standardised record
                   </button>
@@ -359,22 +298,13 @@ export function DocumentReview({
             <Panel title="Document activity">
               <DataTable
                 rows={data.audit.filter(
-                  (a) =>
-                    a.resource === data.doc.name ||
-                    a.resource === documentId ||
-                    a.resource === record?.id,
+                  (a) => a.resource === data.doc.name || a.resource === documentId || a.resource === record?.id,
                 )}
                 rowKey={(a) => a.id}
                 columns={[
-                  {
-                    label: "Timestamp",
-                    render: (a) => new Date(a.timestamp).toLocaleString("en-MY"),
-                  },
+                  { label: "Timestamp", render: (a) => new Date(a.timestamp).toLocaleString("en-MY") },
                   { label: "User", render: (a) => a.user },
-                  {
-                    label: "Action",
-                    render: (a) => a.action.replaceAll("_", " "),
-                  },
+                  { label: "Action", render: (a) => a.action.replaceAll("_", " ") },
                   { label: "Details", render: (a) => a.details },
                 ]}
               />
