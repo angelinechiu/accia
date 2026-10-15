@@ -57,7 +57,7 @@ function ExtractionField({
               <Check size={12} /> Reviewed
             </>
           ) : (
-            `${field.confidence}% · ${field.confidence >= 95 ? "High" : field.confidence >= 80 ? "Review suggested" : "Low confidence"}`
+            `${field.confidence}%`
           )}
         </span>
       </div>
@@ -87,13 +87,6 @@ function ExtractionField({
           </button>
         )}
       </div>
-      {field.correctedBy && (
-        <div className="correction-note">
-          Original: {field.original || "(empty)"} → Corrected: {field.value}
-          <br />
-          Reviewed by {field.correctedBy}
-        </div>
-      )}
     </div>
   );
 }
@@ -119,7 +112,7 @@ export function DocumentReview({
     }),
     `${user.id}:${documentId}`,
   );
-  const [tab, setTab] = useState("Extracted Data");
+  const [panel, setPanel] = useState<"review" | "validation" | "record" | "activity">("review");
   const [note, setNote] = useState("");
   const [failure, setFailure] = useState("");
   const [toast, setToast] = useState("");
@@ -145,33 +138,12 @@ export function DocumentReview({
   const readonly = data.doc.status === "COMPLETED";
   const record = data.records.find((r) => r.documentId === documentId);
   const failed = data.doc.status === "FAILED";
-  const pending = ["UPLOADED", "QUEUED", "PROCESSING"].includes(
-    data.doc.status,
-  );
-
-  const steps = [
-    { key: "Upload", label: "Upload" },
-    { key: "Extract", label: "Extract" },
-    { key: "Validate", label: "Validate" },
-    { key: "Standardise", label: "Standardise" },
-  ];
-
-  const currentIndex = readonly
-    ? 4
-    : data.doc.status === "VALIDATED"
-      ? 2
-      : failed
-        ? 1
-        : pending
-          ? 0
-          : data.doc.status === "EXTRACTED" || data.doc.status === "CORRECTED" || data.doc.status === "IN_REVIEW" || data.doc.status === "EXCEPTION"
-            ? 1
-            : 2;
+  const pending = ["UPLOADED", "QUEUED", "PROCESSING"].includes(data.doc.status);
 
   return (
     <>
       <PageHeader
-        eyebrow="DOCUMENT PROCESSING"
+        eyebrow="DOCUMENT REVIEW"
         title={data.doc.name}
         description={`${data.doc.id} · Uploaded ${formatDate(data.doc.createdAt)}`}
         actions={
@@ -183,21 +155,6 @@ export function DocumentReview({
           </>
         }
       />
-
-      <div className="timeline">
-        {steps.map((s, i) => (
-          <div
-            className={i < currentIndex ? "done" : i === currentIndex ? "current" : ""}
-            key={s.key}
-          >
-            <span>{i < currentIndex ? <Check size={14} /> : i + 1}</span>
-            <strong>{s.label}</strong>
-            <small>
-              {i < currentIndex ? "Complete" : i === currentIndex ? "Current" : "Pending"}
-            </small>
-          </div>
-        ))}
-      </div>
 
       {failure && <ErrorState message={failure} />}
 
@@ -226,118 +183,80 @@ export function DocumentReview({
         </Panel>
       ) : (
         <>
-          <div className="tabs">
-            {[
-              "Document",
-              "Extracted Data",
-              "Validation",
-              "Exceptions",
-              "Standardised Record",
-              "Activity",
-            ].map((t) => (
-              <button
-                key={t}
-                className={tab === t ? "active" : ""}
-                onClick={() => setTab(t)}
-              >
-                {t}
-                {t === "Exceptions" &&
-                  data.exceptions.some((e) => e.status !== "RESOLVED") && (
-                    <span className="tab-count">
-                      {
-                        data.exceptions.filter((e) => e.status !== "RESOLVED")
-                          .length
-                      }
-                    </span>
-                  )}
-              </button>
-            ))}
+          <div className="review-toolbar">
+            <button
+              className={panel === "review" ? "active" : ""}
+              onClick={() => setPanel("review")}
+            >
+              Review
+            </button>
+            <button
+              className={panel === "validation" ? "active" : ""}
+              onClick={() => setPanel("validation")}
+            >
+              Validation
+            </button>
+            <button
+              className={panel === "record" ? "active" : ""}
+              onClick={() => setPanel("record")}
+            >
+              Standardised Record
+            </button>
+            <button
+              className={panel === "activity" ? "active" : ""}
+              onClick={() => setPanel("activity")}
+            >
+              Activity
+            </button>
           </div>
 
-          {tab === "Document" && (
-            <div className="preview-alone">
-              <DocumentViewer
-                name={data.doc.name}
-                extraction={data.extraction}
-              />
-            </div>
-          )}
-
-          {(tab === "Extracted Data" || tab === "Exceptions") && (
-            <div className="review-grid">
-              <DocumentViewer
-                name={data.doc.name}
-                extraction={data.extraction}
-              />
-              <div>
-                <Panel
-                  title="Extracted data"
-                  subtitle="Review fields extracted from the document and confirm or correct them."
-                >
-                  <div className="panel-body">
-                    {tab === "Exceptions" && (
-                      <div className="exception-summary">
-                        {data.exceptions.map((e) => (
-                          <div className="exception-card" key={e.id}>
-                            <Badge>{e.status}</Badge>
-                            <strong>{e.type.replaceAll("_", " ")}</strong>
-                            <p>{e.message}</p>
-                            <small>Severity: {e.severity}</small>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                    <div className="extraction-grid">
-                      {Object.entries(data.extraction.fields).map(
-                        ([key, field]) => (
-                          <ExtractionField
-                            key={`${key}:${field.value}:${field.correctedBy}`}
-                            field={field}
-                            readonly={readonly}
-                            onSave={(value) =>
-                              run(
-                                () =>
-                                  updateExtractedField(
-                                    user,
-                                    documentId,
-                                    key,
-                                    value,
-                                  ),
-                                "Extracted field updated.",
-                              )
-                            }
-                          />
-                        ),
-                      )}
+          {panel === "review" && (
+            <div className="split-review">
+              <div className="split-left">
+                <div className="split-header">Original document</div>
+                <DocumentViewer
+                  name={data.doc.name}
+                  extraction={data.extraction}
+                />
+              </div>
+              <div className="split-right">
+                <div className="split-header">Extracted fields</div>
+                <div className="extraction-panel">
+                  {Object.entries(data.extraction.fields).map(([key, field]) => (
+                    <ExtractionField
+                      key={`${key}:${field.value}:${field.correctedBy}`}
+                      field={field}
+                      readonly={readonly}
+                      onSave={(value) =>
+                        run(
+                          () => updateExtractedField(user, documentId, key, value),
+                          "Field updated.",
+                        )
+                      }
+                    />
+                  ))}
+                  {data.extraction.lineItems.length > 0 && (
+                    <div className="line-items-block">
+                      <strong>Line items</strong>
+                      <DataTable
+                        rows={data.extraction.lineItems}
+                        rowKey={(r) => r.description}
+                        columns={[
+                          { label: "Description", render: (r) => r.description },
+                          { label: "Qty", render: (r) => r.quantity },
+                          { label: "Unit", render: (r) => money(r.unitPrice) },
+                          { label: "Amount", render: (r) => money(r.amount) },
+                        ]}
+                      />
                     </div>
-                    <p className="field-help">
-                      Save each field to confirm it, especially low-confidence values.
-                    </p>
-                  </div>
-                </Panel>
-                <Panel title="Line items">
-                  <DataTable
-                    rows={data.extraction.lineItems}
-                    rowKey={(r) => r.description}
-                    columns={[
-                      { label: "Description", render: (r) => r.description },
-                      { label: "Qty", render: (r) => r.quantity },
-                      {
-                        label: "Unit price",
-                        render: (r) => money(r.unitPrice),
-                      },
-                      { label: "Amount", render: (r) => money(r.amount) },
-                    ]}
-                  />
-                </Panel>
-                {!readonly && (
-                  <Panel title="Review & revalidate">
-                    <div className="panel-body">
-                      <Field label="Correction note *">
+                  )}
+                  {!readonly && (
+                    <div className="review-actions">
+                      <Field label="Note">
                         <textarea
                           value={note}
                           onChange={(e) => setNote(e.target.value)}
-                          placeholder="Explain what you checked or corrected…"
+                          placeholder="Optional note for this review…"
                         />
                       </Field>
                       <button
@@ -345,25 +264,22 @@ export function DocumentReview({
                         disabled={busy}
                         onClick={() =>
                           run(
-                            () => resolveException(user, documentId, note),
-                            "Validation updated. Check the Validation tab for results.",
+                            () => resolveException(user, documentId, note || "Reviewed"),
+                            "Review saved and revalidated.",
                           )
                         }
                       >
                         <CheckCircle2 size={16} /> Save & revalidate
                       </button>
                     </div>
-                  </Panel>
-                )}
+                  )}
+                </div>
               </div>
             </div>
           )}
 
-          {tab === "Validation" && (
-            <Panel
-              title="Validation"
-              subtitle="Rules applied to the extracted values"
-            >
+          {panel === "validation" && (
+            <Panel title="Validation" subtitle="Rules applied to the extracted values">
               <div className="validation-summary">
                 {(["PASS", "WARNING", "FAIL"] as const).map((s) => (
                   <div key={s}>
@@ -410,21 +326,18 @@ export function DocumentReview({
                 >
                   <FileCheck2 size={16} /> Create standardised record
                 </button>
-                <span className="muted">
-                  Resolve any failures and review low-confidence fields first.
-                </span>
               </div>
             </Panel>
           )}
 
-          {tab === "Standardised Record" &&
+          {panel === "record" &&
             (record ? (
               <RecordDetail record={record} />
             ) : (
               <Panel title="Ready for standardisation">
                 <div className="panel-body">
                   <p>
-                    Complete validation and resolve all exceptions to create the standardised accounting record.
+                    Complete validation and resolve exceptions to create the standardised accounting record.
                   </p>
                   <button
                     className="btn primary"
@@ -442,7 +355,7 @@ export function DocumentReview({
               </Panel>
             ))}
 
-          {tab === "Activity" && (
+          {panel === "activity" && (
             <Panel title="Document activity">
               <DataTable
                 rows={data.audit.filter(
@@ -455,8 +368,7 @@ export function DocumentReview({
                 columns={[
                   {
                     label: "Timestamp",
-                    render: (a) =>
-                      new Date(a.timestamp).toLocaleString("en-MY"),
+                    render: (a) => new Date(a.timestamp).toLocaleString("en-MY"),
                   },
                   { label: "User", render: (a) => a.user },
                   {
