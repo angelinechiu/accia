@@ -131,6 +131,46 @@
   color: #2a3a4a;
 }
 
+/* Sidebar groups and subtopics */
+.nav-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.nav-group-toggle {
+  width: 100%;
+  text-align: left;
+  justify-content: flex-start;
+  gap: 10px;
+}
+
+.nav-group-toggle svg:last-child {
+  margin-left: auto;
+  opacity: 0.7;
+}
+
+.nav-sub {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 2px 0 8px 14px;
+  padding-left: 10px;
+  border-left: 2px solid #c5e4f4;
+}
+
+.nav-sub-item {
+  font-size: 12.5px;
+  padding-left: 10px;
+}
+
+.app-shell[data-role="accountant"] .nav-sub-item.active {
+  background: #2a3a4a;
+  color: #f6f1e8;
+}
+
+.app-shell[data-role="accountant"] .nav-sub {
+  border-left-color: #a8d3f0;
+}
 
 .acct-board {
   display: grid;
